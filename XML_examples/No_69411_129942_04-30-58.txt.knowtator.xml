@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="No_69411_129942_04-30-58.txt">
+    <annotation>
+            <mention id = "135164956489994603877201589681157233616" /> 
+            <annotator id=>FC_FINDER</annotator> 
+            <span start="0" end="176" />
+            <spannedText>however, there is new nonenhancing fluid collection along the posterior medial aspect of the resection bed, in a subpleural location, with tracking along the dome of the liver.</spannedText>
+            <creationDate>Fri Jan 27 12:47:12 2017</creationDate>
+        </annotation>
+        <classMention id="135164956489994603877201589681157233616">
+            <mentionClass id="Fluid collection-definitive">however, there is new nonenhancing fluid collection along the posterior medial aspect of the resection bed, in a subpleural location, with tracking along the dome of the liver.</mentionClass>
+        </classMention><annotation>
+            <mention id = "135176397195117988680076561708895099856" /> 
+            <annotator id=>FC_FINDER</annotator> 
+            <span start="0" end="602" />
+            <spannedText>however, note is made (over) [**2604-3-11**] 11:18 am ct abdomen w/contrast; ct pelvis w/contrast clip # [**clip number (radiology) 53688**] reason: r/o obstruction only one bottle of oral contrast pleaseplea admitting diagnosis: metastastic breast cancer to liver/sda ______________________________________________________________________________ final report (cont) of new non-enhancing, nonhemorrhagic fluid collection high within the resection bed, in the right posteromedial subdiaphragmatic location, measuring approximately 3.5 x 5.5 x 6.0 cm and tracking superiorly along the dome of the liver.</spannedText>
+            <creationDate>Fri Jan 27 12:47:12 2017</creationDate>
+        </annotation>
+        <classMention id="135176397195117988680076561708895099856">
+            <mentionClass id="Fluid collection-definitive">however, note is made (over) [**2604-3-11**] 11:18 am ct abdomen w/contrast; ct pelvis w/contrast clip # [**clip number (radiology) 53688**] reason: r/o obstruction only one bottle of oral contrast pleaseplea admitting diagnosis: metastastic breast cancer to liver/sda ______________________________________________________________________________ final report (cont) of new non-enhancing, nonhemorrhagic fluid collection high within the resection bed, in the right posteromedial subdiaphragmatic location, measuring approximately 3.5 x 5.5 x 6.0 cm and tracking superiorly along the dome of the liver.</mentionClass>
+        </classMention><annotation>
+            <mention id = "135182533416304718452202682130737060816" /> 
+            <annotator id=>FC_FINDER</annotator> 
+            <span start="0" end="131" />
+            <spannedText>the jejunojejunal anastomosis site is identified, with what appears to be intact suture line and without adjacent fluid collection.</spannedText>
+            <creationDate>Fri Jan 27 12:47:12 2017</creationDate>
+        </annotation>
+        <classMention id="135182533416304718452202682130737060816">
+            <mentionClass id="Fluid collection-definitive">the jejunojejunal anastomosis site is identified, with what appears to be intact suture line and without adjacent fluid collection.</mentionClass>
+        </classMention><annotation>
+            <mention id = "135197117736460344229919633754136435664" /> 
+            <annotator id=>FC_FINDER</annotator> 
+            <span start="0" end="225" />
+            <spannedText>trace fluid along the resection bed is unchanged, but there is now new nonenhancing, non-hemorrhagic fluid collection seen in the posteromedial subdiaphragmatic location, with trace fluid tracking along the dome of the liver.</spannedText>
+            <creationDate>Fri Jan 27 12:47:12 2017</creationDate>
+        </annotation>
+        <classMention id="135197117736460344229919633754136435664">
+            <mentionClass id="Fluid collection-definitive">trace fluid along the resection bed is unchanged, but there is now new nonenhancing, non-hemorrhagic fluid collection seen in the posteromedial subdiaphragmatic location, with trace fluid tracking along the dome of the liver.</mentionClass>
+        </classMention> <eHOST_Adjudication_Status version="1.0">
+        <Adjudication_Selected_Annotators version="1.0" />
+        <Adjudication_Selected_Classes version="1.0" />
+        <Adjudication_Others>
+            <CHECK_OVERLAPPED_SPANS>false</CHECK_OVERLAPPED_SPANS>
+            <CHECK_ATTRIBUTES>false</CHECK_ATTRIBUTES>
+            <CHECK_RELATIONSHIP>false</CHECK_RELATIONSHIP>
+            <CHECK_CLASS>false</CHECK_CLASS>
+            <CHECK_COMMENT>false</CHECK_COMMENT>
+        </Adjudication_Others>
+    </eHOST_Adjudication_Status>
+</annotations>

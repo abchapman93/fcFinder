@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/app/mainwindow.py", line 2998, in main
+    mainwindow = run_spyder(app, options, args)
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/app/mainwindow.py", line 2912, in run_spyder
+    main.post_visible_setup()
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/app/mainwindow.py", line 1265, in post_visible_setup
+    self.editor.setup_open_files()
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/plugins/editor.py", line 2549, in setup_open_files
+    self.editorsplitter.set_layout_settings(layout)
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/widgets/editor.py", line 2033, in set_layout_settings
+    editorstack.set_current_filename(cfname)
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/widgets/editor.py", line 1096, in set_current_filename
+    index = self.has_filename(filename)
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/widgets/editor.py", line 1091, in has_filename
+    if fixpath(filename) == fixpath(finfo.filename):
+  File "/Users/alec/anaconda/lib/python3.5/site-packages/spyder/widgets/editor.py", line 1089, in <lambda>
+    fixpath = lambda path: osp.normcase(osp.realpath(path))
+  File "/Users/alec/anaconda/lib/python3.5/posixpath.py", line 372, in realpath
+    path, ok = _joinrealpath(filename[:0], filename, {})
+TypeError: 'NoneType' object is not subscriptable
