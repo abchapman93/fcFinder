@@ -26,7 +26,6 @@ from xml.etree import ElementTree
 from xml.dom import minidom
 
 DATADIR = os.path.join(os.path.expanduser('~'),'Box Sync','Bucher_Surgical_MIMICIII','pyConText_implement','fcFinder')
-#change these to the URl
 modifiers = itemData.instantiateFromCSVtoitemData(\
 "/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/modifiers.tsv")
 targets = itemData.instantiateFromCSVtoitemData(\
@@ -223,61 +222,18 @@ def fluid_collection_classifier(document,source_file):
 def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_class will be defined by the logic
     """Takes a ConTextMarkup object and returns a single annotation object.
     This will have to be modified for classes other than definiiveEvidence
-    2/24: these if statements are probably pretty unnecessary, you can just have one statement"""
+    2/24: cut down the unnecessary if statements"""
     #annotations = []
-
-    #for tO in markup.nodes(): #apply logic here to apply to multiple different mention_classes
-    if mention_class == 'Fluid collection-definitive':
-        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
-                mentionid=tO.getTagID(), spannedText=markup.getText(),
-                span=markup.getDocSpan()) #MADE THIS THE DOCSPAN
-        return annotation
-    if mention_class == 'Fluid collection-negated':
-        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
-                mentionid=tO.getTagID(), spannedText=markup.getText(),
-                span=markup.getDocSpan())#MADE THIS THE DOCSPAN
-        return annotation
-    if mention_class == 'fluid collection-indication':
-        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
-                mentionid=tO.getTagID(), spannedText=markup.getText(),
-                span=markup.getDocSpan())
-        return annotation
-    if mention_class == "Fluid collection-probable":
-        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
-                mentionid=tO.getTagID(), spannedText=markup.getText(),
-                span=markup.getDocSpan())
-        return annotation
-    if mention_class == "Fluid collection-historical":
-        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
-                mentionid=tO.getTagID(), spannedText=markup.getText(),
-                span=markup.getDocSpan())
-        return annotation
-    if mention_class == 'Anatomy':
-        annotation = mentionnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
-                mentionid=tO.getTagID(), spannedText=markup.getText(),
-                span=tO.getDocSpan()) #span is just the span of the mention
-        return annotation
-        #annotation = definitiveEvidence(markup)
-        #annotation.setText(markup.getText())
-        #annotation.setSpan(markup.getScope())
-        #annotation.setMentionID(tO.getTagID())
     
-        #annotations.append(annotation)
-    else:
-        annotation = None
+    annotation = mentionAnnotation((tagObject=tO,textSource=file_name,mentionClass=mention_class,
+                                    mentionid=tO.getTagID(), spannedText=markup.getText(),
+                                    span=markup.getDocSpan())
     return annotation
     
 def getXML(annotation): #text source should be at the document level
         return annotationXMLSkel.format(annotation.getTextSource(),annotation.getMentionID(),
                 annotation.getAnnotatorID(),annotation.getSpan()[0],annotation.getSpan()[1],
                 annotation.getText(),annotation.getCreationDate(),annotation.getMentionClass())
-
-documentXMLSkel = \
-u"""<?xml version="1.0" encoding="UTF-8"?>
-<annotations textSource="{0}">
-</annotations>
-
-"""
 
 def writeKnowtator(annotations,text_source): #test_source should be read automatically from the XML string
     """Writes a .txt.knowtator.xml file for all annotations in a document
@@ -293,11 +249,6 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
             root.append(annotation.getMentionXML())   ####Bring this back later!!!
         except AttributeError:
             pass
-        #classMention = SubElement(root,"classMention")
-        #classMention.set("id",annotation.getAnnotatorID())
-        #mentionClass = SubElement(classMention,"classMention")
-        #mentionClass.set("id",annotation.getMentionClass())
-        #mentionClass.text = annotation.getText()
     
         
     adjudication_status = SubElement(root,'eHOST_Adjudication_Status')
@@ -321,25 +272,6 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
     
     XMLstring = prettify(root)
     return XMLstring
-    
-    if not os.path.exists(outpath):
-        os.mkdir(outpath)
-    with open(os.path.join(outpath,text_source+'.knowtator.xml'),'w') as f0:
-        f0.write(XMLstring)
-        
-    return os.path.join(outpath,text_source+'.knowtator.xml')
-    
-#test a document
-#input_report = '/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/Radiology_Annotation/Adjudication/Batch_3/corpus/Yes_28226_116465_05-29-93.txt'
-#report = ''
-#with open(input_report,'r') as f0:
-#    report += f0.read()
-#con_doc = create_context_doc(report,modifiers,targets)
-
-
-
-
-
 
 
 

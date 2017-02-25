@@ -9,18 +9,8 @@ Created on Mon Feb  6 10:16:35 2017
 #test how to retain the span
 
 import re
-#import pyConTextNLP.helpers as helpers
 import os
 from collections import OrderedDict
-#DATADIR = '/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/Radiology_Annotation/Adjudication/Batch_3/corpus/Yes_68832_100619_06-01-58.txt'
-#DATADIR = '/Users/alec/Box Sync/Radiology_Annotation_Backup/Original Documents/Batch_14/No_62980_181394_08-30-92.txt'
-#report = ''
-#with open(DATADIR,'r') as f0:
-    #report += f0.read()
-#len(report)
-#report_name = os.path.basename(DATADIR)
-
-#from collections import OrderedDict
 
 def preprocess(report):
     """Preprocesses a report for annotation
@@ -85,6 +75,31 @@ def preprocess(report):
     
     
     return report
+
+def preprocess_batches(inpath,outpath):
+    counter = 0
+    if os.path.exists(inpath) == False or os.path.exists(outpath) == False:
+        print("Please check that your path names are correct")
+    else:
+        print('True')
+    batches = glob.glob(os.path.join(inpath,'Batch*'))
+    for batch in batches:
+        batch_name = os.path.basename(batch)
+        os.mkdir(os.path.join(outpath,batch_name))
+        os.mkdir(os.path.join(outpath,batch_name,'corpus'))
+        
+        files = glob.glob(os.path.join(batch,"corpus","*.txt"))
+        
+        for file in files:
+            with open(file,'r') as f1:
+                old_report = f1.read()
+                cleaned_report = helpers.preprocess(old_report)
+                report_name = os.path.basename(file)
+                with open(os.path.join(outpath,batch_name,'corpus',report_name),'w') as f0:
+                    f0.write(cleaned_report)
+                counter += 1
+print("You edited %d batches"%counter)
+    return outpath
 
 def my_sentence_splitter(text):
     """Concatenates a text character by character. Sentences end at a termination point
