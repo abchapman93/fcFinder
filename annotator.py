@@ -52,9 +52,9 @@ def preprocess_batches(inpath,outpath):
     #os.path.join(os.path.expanduser('~'),'Desktop','PreprocessedReports'))
 
 
-DATADIR = os.path.join(os.path.expanduser('~'),'desktop','PreprocessedReports','Batch_3','corpus')
+#DATADIR = os.path.join(os.path.expanduser('~'),'desktop','PreprocessedReports','Batch_3','corpus')
 #my_file_path = os.path.join(DATADIR,'Yes_115_114585_10-31-94.txt')
-outpath = os.path.join(os.path.expanduser('~'),'desktop','PreprocessedReports','Batch_3','saved')
+#outpath = os.path.join(os.path.expanduser('~'),'desktop','PreprocessedReports','Batch_3','saved')
 
 
 
@@ -77,7 +77,7 @@ def annotate_report(file_path, output_dir, modifiers=fc.modifiers, targets=fc.ta
     with open(os.path.join(output_dir,report_name+'.knowtator.xml'),'w') as f1:
         f1.write(XML_string)
     return
-#annotation1 = annotate_report(my_file_path,outpath)
+
 def annotate_batch(inpath, outpath):
     counter = 0
     if os.path.exists(inpath) == False or os.path.exists(outpath) == False:

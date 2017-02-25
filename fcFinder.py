@@ -9,7 +9,6 @@ Created on Wed Jan 25 11:02:49 2017
 import pyConTextNLP.pyConTextGraph as pyConText
 from pyConTextNLP.pyConTextGraph import ConTextMarkup
 import pyConTextNLP.itemData as itemData
-#import networkx as nx
 import os
 import helpers
 
@@ -26,6 +25,7 @@ from xml.etree.cElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree
 from xml.dom import minidom
 
+DATADIR = os.path.join(os.path.expanduser('~'),'Box Sync','Bucher_Surgical_MIMICIII','pyConText_implement','fcFinder')
 #change these to the URl
 modifiers = itemData.instantiateFromCSVtoitemData(\
 "/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/modifiers.tsv")
@@ -171,6 +171,8 @@ def fluid_collection_classifier(document,source_file):
     definite_evidence = 0
     negated_evidence = 0
     indication = 0
+    historical = 0
+    probable = 0
     ignored = 0
 
     annotations = []
@@ -193,6 +195,14 @@ def fluid_collection_classifier(document,source_file):
                     annotation = createAnnotation(m,tO,"fluid collection-indication",source_file)
                     annotations.append(annotation)
                     indication += 1
+                elif m.isModifiedByCategory(tO,"probable_existence"):
+                    annotation = createAnnotation(m,tO,"Fluid collection-probable",source_file)
+                    annotations.append(annotation)
+                    probable += 1
+                elif m.isModifiedByCategory(tO,"historical"):
+                    annotation = createAnnotation(m,tO,"Fluid collection-historical",source_file)
+                    annotations.append(annotation)
+                    historical += 1
                 else:
                     if m.isModifiedByCategory(tO,'anatomy'):
                         annotation = createAnnotation(m,tO,"Fluid collection-definitive",source_file)
@@ -202,8 +212,8 @@ def fluid_collection_classifier(document,source_file):
                         #ignored.append(m)
                         ignored += 1
                         pass
-    print("""Definitive evidence: {0} \n Negated evidence: {1} \n Indication: {2} """\
-          .format(definite_evidence,negated_evidence,indication)) #use this to debug why there aren't any negated
+    #print("""Definitive evidence: {0} \n Negated evidence: {1} \n Indication: {2} \n Probable: {3} \n Historical: {4} \n"""\
+          #.format(definite_evidence,negated_evidence,indication,probable,historical)) #use this to debug why there aren't any negated
     for _ in annotations: #Feb 10 Debug this!! One of the lists was a None Object which caused an error
         if not _:
             annotations.remove(_)
@@ -211,8 +221,9 @@ def fluid_collection_classifier(document,source_file):
 
     
 def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_class will be defined by the logic
-    """Takes a ConTextMarkup object and returns a list of annotation object
-    This will have to be modified for classes other than definiiveEvidence"""
+    """Takes a ConTextMarkup object and returns a single annotation object.
+    This will have to be modified for classes other than definiiveEvidence
+    2/24: these if statements are probably pretty unnecessary, you can just have one statement"""
     #annotations = []
 
     #for tO in markup.nodes(): #apply logic here to apply to multiple different mention_classes
@@ -221,12 +232,22 @@ def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_cla
                 mentionid=tO.getTagID(), spannedText=markup.getText(),
                 span=markup.getDocSpan()) #MADE THIS THE DOCSPAN
         return annotation
-    if mention_class == 'Fluid collection_negated':
-        annotation = mentionnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
+    if mention_class == 'Fluid collection-negated':
+        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
                 mentionid=tO.getTagID(), spannedText=markup.getText(),
                 span=markup.getDocSpan())#MADE THIS THE DOCSPAN
         return annotation
     if mention_class == 'fluid collection-indication':
+        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
+                mentionid=tO.getTagID(), spannedText=markup.getText(),
+                span=markup.getDocSpan())
+        return annotation
+    if mention_class == "Fluid collection-probable":
+        annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
+                mentionid=tO.getTagID(), spannedText=markup.getText(),
+                span=markup.getDocSpan())
+        return annotation
+    if mention_class == "Fluid collection-historical":
         annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
                 mentionid=tO.getTagID(), spannedText=markup.getText(),
                 span=markup.getDocSpan())

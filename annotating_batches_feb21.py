@@ -77,7 +77,7 @@ def annotate_report(file_path, output_dir, modifiers=fc.modifiers, targets=fc.ta
     with open(os.path.join(output_dir,report_name+'.knowtator.xml'),'w') as f1:
         f1.write(XML_string)
     return
-#annotation1 = annotate_report(my_file_path,outpath)
+
 def annotate_batch(inpath, outpath):
     counter = 0
     if os.path.exists(inpath) == False or os.path.exists(outpath) == False:
@@ -89,7 +89,7 @@ def annotate_batch(inpath, outpath):
         #os.mkdir(os.path.join(outpath,batch_name,'saved'))
 
     
-    files = glob.glob(os.path.join(DATADIR,"*.txt"))
+    files = glob.glob(os.path.join(inpath,"*.txt"))
     
     #print(files)
     for file in files:
@@ -100,7 +100,7 @@ def annotate_batch(inpath, outpath):
     print("You annotated %d batches in %s"%(counter,outpath))
     return outpath
     
-annotate_batch(DATADIR,outpath)
+#annotate_batch(DATADIR,outpath)
 
 
 
