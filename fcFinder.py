@@ -165,7 +165,7 @@ def fluid_collection_classifier(document,source_file):
     definitive_evidence: markups that are classified as definitive evidence of fluid collection.
     negated_evidence: markups that are classified as negated evidence of fluid collection.
     indication: markups that are classified as indication of fluid collection.
-    FEB10 NEED TO ADD ANATOMY
+    MARCH 1: CHANGED DEFINITIVE, PROBABLE AND HISTORICAL TO POSITIVE
     ignored: markups that contain target words but are unmodified by any modifiers"""
     definite_evidence = 0
     negated_evidence = 0
@@ -175,47 +175,77 @@ def fluid_collection_classifier(document,source_file):
     ignored = 0
 
     annotations = []
-    
+    completed_spans = []
     #what about different sections?
     markups = [m[1] for m in document.getSectionMarkups()]
     
     for m in markups:
         for tO in m.nodes():
             if tO.getCategory() == ['fluid_collection']:
-                #negated
-                if m.isModifiedByCategory(tO,"definite_negated_existence"):
-                    #negated_evidence.append(m)
-                    annotation = createAnnotation(m,tO,"Fluid collection-negated",source_file)
-                    annotations.append(annotation)
-                    negated_evidence += 1
-                #indication
-                elif m.isModifiedByCategory(tO, "indication"):
-                    #indication.append(m)
+                annotation = None
+                if '?' in m.getRawText():
                     annotation = createAnnotation(m,tO,"fluid collection-indication",source_file)
-                    annotations.append(annotation)
                     indication += 1
-                elif m.isModifiedByCategory(tO,"probable_existence"):
-                    annotation = createAnnotation(m,tO,"Fluid collection-probable",source_file)
-                    annotations.append(annotation)
-                    probable += 1
-                elif m.isModifiedByCategory(tO,"historical"):
-                    annotation = createAnnotation(m,tO,"Fluid collection-historical",source_file)
-                    annotations.append(annotation)
-                    historical += 1
-                else:
+                elif m.isModifiedByCategory(tO,"definite_existence"):
                     if m.isModifiedByCategory(tO,'anatomy'):
-                        annotation = createAnnotation(m,tO,"Fluid collection-definitive",source_file)
-                        annotations.append(annotation)
+                        annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
+                        #annotations.append(annotation)
                         definite_evidence += 1
+                else:
+                    #negated
+                    if m.isModifiedByCategory(tO,"definite_negated_existence"):
+                        #negated_evidence.append(m)
+                        annotation = createAnnotation(m,tO,"Fluid collection-negated",source_file)
+                        #annotations.append(annotation)
+                        negated_evidence += 1
+                    #indication
+                    elif m.isModifiedByCategory(tO, "indication"):
+                        #indication.append(m)
+                        annotation = createAnnotation(m,tO,"fluid collection-indication",source_file)
+                        #annotations.append(annotation)
+                        indication += 1
+                    elif m.isModifiedByCategory(tO,"probable_existence"):
+                        if m.isModifiedByCategory(tO,"anatomy"):
+                            annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
+                            #annotations.append(annotation)
+                            probable += 1
+                        else:
+                            ignored += 1
+                            annotation = None
+                    elif m.isModifiedByCategory(tO,"historical"):
+                        if m.isModifiedByCategory(tO,"anatomy"):
+                            annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
+                            #annotations.append(annotation)
+                            historical += 1
+                        else:
+                            annotation = None
+                            ignored += 1
                     else:
-                        #ignored.append(m)
-                        ignored += 1
+                        if m.isModifiedByCategory(tO,'anatomy'):
+                            annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
+                            #annotations.append(annotation)
+                            definite_evidence += 1
+                        else:
+                            annotation = None
+                            ignored += 1
+                    if m.isModifiedByCategory(tO,'pseudoanatomy'): #prevent pseudoanatomy
+                        if not m.isModifiedByCategory(tO,'anatomy'):
+                            annotation = None
+                        else:
+                            annotation = annotation
+                if annotation: #3/7 ADDED THIS TO ELIMINATE EXACT DOUBLES
+                    if m.getDocSpan() in completed_spans:
                         pass
+                    else:
+                        completed_spans.append(m.getDocSpan())
+                        annotations.append(annotation)
     #print("""Definitive evidence: {0} \n Negated evidence: {1} \n Indication: {2} \n Probable: {3} \n Historical: {4} \n"""\
           #.format(definite_evidence,negated_evidence,indication,probable,historical)) #use this to debug why there aren't any negated
     for _ in annotations: #Feb 10 Debug this!! One of the lists was a None Object which caused an error
-        if not _:
+        if _ == 'false':
             annotations.remove(_)
+    #Feb 28: trying to make it unique
+    return annotations
     return annotations
 
     
@@ -225,7 +255,7 @@ def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_cla
     2/24: cut down the unnecessary if statements"""
     #annotations = []
     
-    annotation = mentionAnnotation((tagObject=tO,textSource=file_name,mentionClass=mention_class,
+    annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
                                     mentionid=tO.getTagID(), spannedText=markup.getText(),
                                     span=markup.getDocSpan())
     return annotation

@@ -10,6 +10,7 @@ Created on Mon Feb  6 10:16:35 2017
 
 import re
 import os
+import random
 from collections import OrderedDict
 
 def preprocess(report):
@@ -98,17 +99,18 @@ def preprocess_batches(inpath,outpath):
                 with open(os.path.join(outpath,batch_name,'corpus',report_name),'w') as f0:
                     f0.write(cleaned_report)
                 counter += 1
-print("You edited %d batches"%counter)
+    print("You edited %d batches"%counter)
     return outpath
 
 def my_sentence_splitter(text):
     """Concatenates a text character by character. Sentences end at a termination point
         Returns an OrderedDictionary: Keys are the sentence strings, values are their span in the document
         This can then be passed to pyConText to keep track of the original span of the TagObjects."""
+    unid = 0 #this is a unique identifier that will allow doubles in the dictionary
     txt = text
     i = 0 #variable that will just keep track of where we are in the report
     #characterLoc = 0
-    termination_points = '.?!~'
+    termination_points = '.!~?' #MAR7 REPLACED '?'
     start_span = 0
     end_span = 0
     iteration = 0
@@ -122,7 +124,9 @@ def my_sentence_splitter(text):
             
             end_span += 1 #one for the current character, one for a whitespace
             currentSentence = txt[start_span:end_span] #append each new character to the string
-            
+            if currentSentence in spans: ###ADDED THIS TO ALLOW DOUBLES
+                currentSentence = str(unid)+' '+currentSentence
+                unid += 1
             spans[currentSentence] = (start_span, end_span) #save the sentence in a dictionary with the start and end spans
             
             start_span = end_span + 1 #set the start of the next sentence
