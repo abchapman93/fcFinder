@@ -1,0 +1,20 @@
+README
+
+This is the README for the Python package fcFinder. This package offers an implementation of the pyConText library to detect both mention-level detection and semantic extraction of fluid collections in radiology reports and document classification.
+
+The source code is available at https://github.com/abchapman93/fcFinder. 
+
+This package contains the following modules:
+
+- fcFinder.py: the primary module for the package. Defines functions used for implementing pyConText, classes used for creating XML output, and rules for classifying pyConText findings.
+
+- annotator.py: this module contains code that implements fcFinder on individual reports and batches of reports and saves the output in files that can be read into eHOST and adjudicated with a gold standard.
+
+- doc_classifier.py: contains code that classifies documents based on output by fcFinder
+
+- helpers.py: contains code for custom sentence splitting and preprocessing. 
+
+- modifiers.tsv: contains anatomic and lexical modifiers.
+
+- targets.tsv: contains targets and pseudo targets for fluid collection.
+

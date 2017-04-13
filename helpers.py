@@ -23,9 +23,9 @@ def preprocess(report):
         - delete [**3432]
         - delete excess whitespaces
         """
-    
+
     #1) delete new page header
-    
+
     txt = report
     header_exists = re.search("\(Over\)",report)
     while header_exists:
@@ -49,7 +49,7 @@ def preprocess(report):
 
     for h in headers:
         report = re.sub(h, "~ "+h,report)
-    
+
     #Replace exception words
     report = re.sub('d\.r\.|dr\.|Dr\.|DR\.','DR',report)
     report = re.sub('EG\.|e\.g\.|eg\.','eg,',report)
@@ -62,19 +62,19 @@ def preprocess(report):
     #report = re.sub('\[\*\*[\w\-\(\)]{1,}\*\*\ ]','',report)
     report = re.sub('\[\*\*[^\*]{1,}\*\*\]','',report)
     report = re.sub('Clip #','',report)
-    
+
     # delete times
     report = re.sub('(\d{1,2}:\d{2} )((AM)|(am)|(A.M.)|(a.m.)|(PM)|(pm)|(P.M.)|(p.m.))','',report)
-    
+
     #2) delete excess whitespaces
     report = re.sub('[\n]{2,}','\n',report)
     report = re.sub('[\t]{2,}','\t',report)
     report = re.sub('[ ]{3,}',' ',report)
-    
+
     #3) delete ----
     report = re.sub('[_]{5,}', '\n', report)
-    
-    
+
+
     return report
 
 def preprocess_batches(inpath,outpath):
@@ -88,9 +88,9 @@ def preprocess_batches(inpath,outpath):
         batch_name = os.path.basename(batch)
         os.mkdir(os.path.join(outpath,batch_name))
         os.mkdir(os.path.join(outpath,batch_name,'corpus'))
-        
+
         files = glob.glob(os.path.join(batch,"corpus","*.txt"))
-        
+
         for file in files:
             with open(file,'r') as f1:
                 old_report = f1.read()
@@ -115,33 +115,33 @@ def my_sentence_splitter(text):
     end_span = 0
     iteration = 0
     currentSentence = ''
-    
+
     currentCharacter = text[end_span]
-    
+
     spans = OrderedDict()
     while end_span < len(text):
         if currentCharacter in termination_points:
-            
+
             end_span += 1 #one for the current character, one for a whitespace
             currentSentence = txt[start_span:end_span] #append each new character to the string
             if currentSentence in spans: ###ADDED THIS TO ALLOW DOUBLES
                 currentSentence = str(unid)+' '+currentSentence
                 unid += 1
             spans[currentSentence] = (start_span, end_span) #save the sentence in a dictionary with the start and end spans
-            
+
             start_span = end_span + 1 #set the start of the next sentence
-            
+
             i += 1
-            
+
             iteration += 1
-            
+
             try:
-            
+
                 currentCharacter = text[start_span]
             except IndexError:
                 pass
         else:
-            
+
             end_span += 1
             i += 1
             try:
@@ -149,4 +149,3 @@ def my_sentence_splitter(text):
             except IndexError:
                 pass
     return spans
-

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Wed Mar  8 11:04:31 2017
+
+@author: alec
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Wed Jan 25 11:02:49 2017
 
 @author: alec
@@ -176,7 +184,6 @@ def fluid_collection_classifier(document,source_file):
 
     annotations = []
     completed_spans = []
-    #what about different sections?
     markups = [m[1] for m in document.getSectionMarkups()]
     
     for m in markups:
@@ -189,25 +196,17 @@ def fluid_collection_classifier(document,source_file):
                 elif m.isModifiedByCategory(tO,"definite_existence"):
                     if m.isModifiedByCategory(tO,'anatomy'):
                         annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                        #annotations.append(annotation)
                         definite_evidence += 1
                 else:
-                    #negated
                     if m.isModifiedByCategory(tO,"definite_negated_existence"):
-                        #negated_evidence.append(m)
                         annotation = createAnnotation(m,tO,"Fluid collection-negated",source_file)
-                        #annotations.append(annotation)
                         negated_evidence += 1
-                    #indication
                     elif m.isModifiedByCategory(tO, "indication"):
-                        #indication.append(m)
                         annotation = createAnnotation(m,tO,"fluid collection-indication",source_file)
-                        #annotations.append(annotation)
                         indication += 1
                     elif m.isModifiedByCategory(tO,"probable_existence"):
                         if m.isModifiedByCategory(tO,"anatomy"):
                             annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                            #annotations.append(annotation)
                             probable += 1
                         else:
                             ignored += 1
@@ -215,7 +214,6 @@ def fluid_collection_classifier(document,source_file):
                     elif m.isModifiedByCategory(tO,"historical"):
                         if m.isModifiedByCategory(tO,"anatomy"):
                             annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                            #annotations.append(annotation)
                             historical += 1
                         else:
                             annotation = None
@@ -223,29 +221,24 @@ def fluid_collection_classifier(document,source_file):
                     else:
                         if m.isModifiedByCategory(tO,'anatomy'):
                             annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                            #annotations.append(annotation)
                             definite_evidence += 1
                         else:
                             annotation = None
                             ignored += 1
-                    if m.isModifiedByCategory(tO,'pseudoanatomy'): #prevent pseudoanatomy
+                    if m.isModifiedByCategory(tO,'pseudoanatomy'):
                         if not m.isModifiedByCategory(tO,'anatomy'):
                             annotation = None
                         else:
                             annotation = annotation
-                if annotation: #3/7 ADDED THIS TO ELIMINATE EXACT DOUBLES
+                if annotation:
                     if m.getDocSpan() in completed_spans:
                         pass
                     else:
                         completed_spans.append(m.getDocSpan())
                         annotations.append(annotation)
-    #print("""Definitive evidence: {0} \n Negated evidence: {1} \n Indication: {2} \n Probable: {3} \n Historical: {4} \n"""\
-          #.format(definite_evidence,negated_evidence,indication,probable,historical)) #use this to debug why there aren't any negated
-    for _ in annotations: #Feb 10 Debug this!! One of the lists was a None Object which caused an error
+    for _ in annotations:
         if _ == 'false':
             annotations.remove(_)
-    #Feb 28: trying to make it unique
-    return annotations
     return annotations
 
     
