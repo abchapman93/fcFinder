@@ -12,6 +12,8 @@ sys.path.append(os.getcwd())
 import fcFinder as fc
 
 def fc_vectorizer(annotations,classes):
+     """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
+    Outputs a vector of annotation counts for each class argument."""
     arr = np.zeros((len(classes),1))
     arr = np.ravel(arr)
     for i in range(len(classes)):
@@ -19,9 +21,101 @@ def fc_vectorizer(annotations,classes):
             if a == classes[i]:
                 arr[i] += 1
     return arr
-    """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
-    Outputs a vector of annotation counts for each class argument."""
+   
+def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_class will be defined by the logic
+    """Takes a ConTextMarkup object and returns a single annotation object.
+    This will have to be modified for classes other than definiiveEvidence
+    2/24: cut down the unnecessary if statements"""
+    #annotations = []
+
+    annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
+                                    mentionid=tO.getTagID(), spannedText=markup.getText(),
+                                    span=markup.getDocSpan())
+    return annotation
     
+class mentionAnnotation(object):
+    def __init__(self,tagObject,textSource=None,mentionClass=None,mentionid=None,annotatorid='FC_FINDER',span=None,
+                 spannedText=None,creationDate=None,XML=None,MentionXML=None):
+        """Creates an annotation of Object"""
+        self.textSource = textSource
+        self.mentionid = str(mentionid)
+        self.mentionClass = mentionClass
+        self.annotatorid = annotatorid
+        self.span = span
+        self.spannedText = spannedText
+        self.creationDate = creationDate
+        self.XML = XML
+        self.MentionXML = MentionXML
+        self.setCreationDate()
+        self.setXML()
+        self.setMentionXML()
+    def setText(self,text):
+        """Sets the text for spannedText"""
+        self.spannedText = text
+    def setSpan(self,markupSpan): #this should be the entire scope for evidence, but not for modifier
+        self.span = markupSpan
+    def setMentionID(self,ID):
+        self.mentionid = str(ID)
+    def setCreationDate(self):
+        self.creationDate = time.strftime("%c") #add time zone
+    def setXML(self):
+        """Creates an element tree that can later be appended to a parent tree"""
+        annotation_body = Element("annotation")
+        mentionID = SubElement(annotation_body, 'mention')
+        mentionID.set('id',self.getMentionID()) #perhaps this needs to follow eHOST's schema
+        annotatorID = SubElement(annotation_body,"annotator")
+        annotatorID.set('id','eHOST_2010')
+        annotatorID.text = self.getAnnotatorID()
+        span = SubElement(annotation_body, "span",{"start":str(self.getSpan()[0]),"end":str(self.getSpan()[1])}) #Why is this backwards?
+        spannedText=SubElement(annotation_body,'spannedText')
+        spannedText.text = self.getText()
+        creationDate = SubElement(annotation_body, "creationDate")
+        creationDate.text = self.getCreationDate()
+        self.XML = annotation_body
+        #print(prettify(parent))
+    def setMentionXML(self):
+        classMention = Element("classMention")
+        classMention.set("id",self.getMentionID())
+        mentionClass = SubElement(classMention,"mentionClass")
+        mentionClass.set("id",self.getMentionClass())
+        mentionClass.text = self.getText()
+        self.MentionXML = classMention
+    def getTextSource(self):
+        return self.textSource
+    def getMentionClass(self):
+        return self.mentionClass
+    def getMentionID(self):
+        return self.mentionid
+    def getText(self):
+        return self.spannedText
+    def getSpan(self):
+        return self.span
+    def getAnnotatorID(self):
+        return self.annotatorid
+    def getCreationDate(self):
+        return self.creationDate
+    def getXML(self):
+        return self.XML
+    def getMentionXML(self):
+        return self.MentionXML
+
+    def stringXML(self):
+        def prettify(elem):
+            """Return a pretty-printed XML string for the Element.
+            """
+            rough_string = ElementTree.tostring(elem, 'utf-8')
+            reparsed = minidom.parseString(rough_string)
+            return reparsed.toprettyxml(indent="  ")
+        XML_string = prettify(self.getXML())
+        MentionXML_string = prettify(self.getMentionXML())
+        return XML_string+MentionXML_string
+    #add this magic method
+    #def __str__(self):
+        #return ElementTree.tostring(self.getXML(), 'utf-8')
+        #rough_string = ElementTree.tostring(self.getXML(), 'utf-8')
+        #reparsed = minidom.parseString(rough_string)
+        #return reparsed.toprettyxml(indent="  ")
+
 def write_knowtator(annotations,text_source): #test_source should be read automatically from the XML string
     """Writes a .txt.knowtator.xml file for all annotations in a document
     Takes a list of mentionAnnotation objects, a source file name, and an outpath.
@@ -59,3 +153,8 @@ def write_knowtator(annotations,text_source): #test_source should be read automa
     
     XMLstring = prettify(root)
     return XMLstring
+    
+def getXML(annotation): #text source should be at the document level
+        return annotationXMLSkel.format(annotation.getTextSource(),annotation.getMentionID(),
+                annotation.getAnnotatorID(),annotation.getSpan()[0],annotation.getSpan()[1],
+                annotation.getText(),annotation.getCreationDate(),annotation.getMentionClass())
