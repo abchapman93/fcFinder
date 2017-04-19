@@ -32,6 +32,7 @@ import time
 from xml.etree.cElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree
 from xml.dom import minidom
+from collections import namedtuple
 
 DATADIR = os.path.join(os.path.expanduser('~'),'Box Sync','Bucher_Surgical_MIMICIII','pyConText_implement','fcFinder')
 modifiers = itemData.instantiateFromCSVtoitemData(\
@@ -39,15 +40,22 @@ modifiers = itemData.instantiateFromCSVtoitemData(\
 targets = itemData.instantiateFromCSVtoitemData(\
     "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
 
-def markup_sentence(s,i=None,modifiers=modifiers, targets=targets, prune_inactive=True):
-    """s is the text from a split sentence
-    i is the tuple of the span of the sentence. Optional.
+def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inactive=True):
+    """s is a sentence from a list of a split report.
+    span is the tuple of the span of the sentence. Optional.
+    Returns a named tuple where markup=markup, span=span
+    NOTE: this is different than in the original pyConText library,
+    where this function just returns a markup object.
+    This is to allow the user to keep track of the original span from the document.
     """
-
+    MarkupSpanPair = namedtuple('MarkupSpanPair',['markup','span'])
     markup = pyConText.ConTextMarkup()
     markup.setRawText(s)
-    if i:
-        markup.setDocSpan(i) #this is an added feature that is not in the original pyConTextNLP code
+    #if i:
+        #markup.setDocSpan(i) #this is an added feature that is not in the original pyConTextNLP code
+    #APR 19: to make this more compatible with the original pyConText, stopped using i as an attribute of markup
+    if not span:
+        span = (0,len(s))
     markup.cleanText() #add your own cleanText function in helpers
     markup.markItems(modifiers, mode="modifier")
     markup.markItems(targets, mode="target")
@@ -58,7 +66,7 @@ def markup_sentence(s,i=None,modifiers=modifiers, targets=targets, prune_inactiv
     markup.pruneSelfModifyingRelationships()
     if prune_inactive:
         markup.dropInactiveModifiers()
-    return markup
+    return MarkupSpanPair(markup=markup,span=span)
 
 def create_context_doc(report,modifiers=modifiers,targets=targets):
     """Creates a ConText document out of a text string using pyConTextNLP itemdata."""
@@ -297,4 +305,7 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
     XMLstring = prettify(root)
     return XMLstring
     
-
+def fcPipeline():
+    """A simple, generic pipeline that can be used with the fcFinder module."""
+    return
+    

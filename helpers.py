@@ -11,6 +11,7 @@ Created on Mon Feb  6 10:16:35 2017
 import re
 import os
 import random
+import fcFinder as fc
 from collections import OrderedDict, namedtuple
 
 
@@ -188,3 +189,18 @@ def my_old_sentence_splitter(text):
             except IndexError:
                 pass
     return spans
+    
+###APR 19: Write a more complex pipeline for use
+    
+#
+#def pipeline(text,preprocesser=lambda x: x.lower(), sentence_splitter=my_sentence_splitter,
+#               markup_func=fc.markup_sentence):
+#    """,,markup_func
+#    A pipeline function that will execute the fcFinder system for a single report.
+#    Takes as arguments:
+#        text: a string report
+#        preprocesser: a function that returns a preprocessed text. Default is text.lower()
+#        sentence_splitter: a function that returns a list of split sentences. Default is a simple text.split('.')
+#        markup_func: a function that returns a pyConText markup for a single sentence.
+#    """
+    
