@@ -21,6 +21,8 @@ def fc_vectorizer(annotations,classes):
             if a == classes[i]:
                 arr[i] += 1
     return arr
+    
+
    
 def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_class will be defined by the logic
     """Takes a ConTextMarkup object and returns a single annotation object.
