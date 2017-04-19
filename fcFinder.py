@@ -67,24 +67,36 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     if prune_inactive:
         markup.dropInactiveModifiers()
     return MarkupSpanPair(markup=markup,span=span)
+def create_list_of_markups(sentences):
+    """Takes a list of sentences and returns a list of markups."""
+    markups = [markup_sentence(s).markup for s in sentences]
+    return markups
 
-def create_context_doc(report,modifiers=modifiers,targets=targets):
-    """Creates a ConText document out of a text string using pyConTextNLP itemdata."""
+def create_context_doc(list_of_markups,modifiers=modifiers,targets=targets):
+    """Creates a ConText document out of a list of markups."""
     context_doc = pyConText.ConTextDocument()
-    sentences = list(helpers.my_sentence_splitter(report).keys())
-    spans = list(helpers.my_sentence_splitter(report).values()) #FEB 10: changed to my_sentence_splitter
-    markups = []
-    for n in range(len(sentences)):
-        s = sentences[n]
-
-        i = spans[n]
-        m = markup_sentence(s.lower(), i, modifiers=modifiers, targets=targets)
-
-        markups.append(m)
-    for m in markups:
+    for m in list_of_markups:
         context_doc.addMarkup(m)
     return context_doc
 
+
+def fcPipeline(reports,preprocess=lambda x:x.lower(),splitter=lambda x:x.split('.'),
+               output=None):
+    """A simple, generic pipeline that can be used with the fcFinder module.
+    Takes a single report as a string, ends with an output function"""
+    report = preprocess(report)
+    sentences = [splitter(r) for r in report]
+    markups = create_list_of_markups(sentences) 
+    document = create_context_doc(markups)
+        
+    
+    return document
+    
+
+    
+    
+    
+    
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -267,45 +279,4 @@ def getXML(annotation): #text source should be at the document level
                 annotation.getAnnotatorID(),annotation.getSpan()[0],annotation.getSpan()[1],
                 annotation.getText(),annotation.getCreationDate(),annotation.getMentionClass())
 
-def writeKnowtator(annotations,text_source): #test_source should be read automatically from the XML string
-    """Writes a .txt.knowtator.xml file for all annotations in a document
-    Takes a list of mentionAnnotation objects, a source file name, and an outpath.
-    2/3/17: returns a single ElementTree Element object.
-    Need to be able to turn this into a string."""
-
-    root = Element('annotations')
-    root.set('textSource',text_source)
-    for annotation in annotations:
-        try: #Feb 10 debug this later!!!
-            root.append(annotation.getXML())
-            root.append(annotation.getMentionXML())   ####Bring this back later!!!
-        except AttributeError:
-            pass
-
-
-    adjudication_status = SubElement(root,'eHOST_Adjudication_Status')
-    adjudication_status.set('version','1.0')
-    selected_annotators = SubElement(adjudication_status,'Adjudication_Selected_Annotators')
-    selected_annotators.set('version','1.0')
-    selected_classes = SubElement(adjudication_status,'Adjudication_Selected_Classes')
-    selected_classes.set('version','1.0')
-    adjudication_others = SubElement(adjudication_status,'Adjudication_Others')
-
-    check_spans = SubElement(adjudication_others,'CHECK_OVERLAPPED_SPANS')
-    check_spans.text = 'false'
-    check_attributes = SubElement(adjudication_others,'CHECK_ATTRIBUTES')
-    check_attributes.text = 'false'
-    check_relationship = SubElement(adjudication_others,'CHECK_RELATIONSHIP')
-    check_relationship.text = 'false'
-    check_class = SubElement(adjudication_others,'CHECK_CLASS')
-    check_class.text = 'false'
-    check_comment = SubElement(adjudication_others,'CHECK_COMMENT')
-    check_comment.text = 'false'
-
-    XMLstring = prettify(root)
-    return XMLstring
-    
-def fcPipeline():
-    """A simple, generic pipeline that can be used with the fcFinder module."""
-    return
     

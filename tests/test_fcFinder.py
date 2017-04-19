@@ -29,7 +29,8 @@ class fcFinderTest(unittest.TestCase):
                         "/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/modifiers.tsv")
         self.targets = itemData.instantiateFromCSVtoitemData(
                         "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
-    
+        self.markups = [fc.markup_sentence(x).markup for x in self.sentences]
+        self.document = fc.create_context_doc(self.markups)
         
     def test_modifiers_exist(self):
         self.assertIsNotNone(self.modifiers)
@@ -57,13 +58,21 @@ class fcFinderTest(unittest.TestCase):
         
     def test_markup_sentence_returns_tuple(self):
         self.assertIsInstance(fc.markup_sentence(self.sentences[0],(0,0)),tuple)
-    def test_markup_sentence_tuple_zero_index_is_markup(self):
-        self.assertIsInstance(fc.markup_sentence(self.sentences[0])[0],pyConText.ConTextMarkup)
-    def test_markup_sentence_tuple_first_index_is_tuple(self):
-        self.assertIsInstance(fc.markup_sentence(self.sentences[0],(0,0))[1],tuple)
+    def test_markup_sentence_tuple_markup_field_is_markup(self):
+        self.assertIsInstance(fc.markup_sentence(self.sentences[0]).markup,pyConText.ConTextMarkup)
+    def test_markup_sentence_tuple_span_field_is_tuple(self):
+        self.assertIsInstance(fc.markup_sentence(self.sentences[0],(0,0)).span,tuple)
     def test_default_markup_sentence_span_starts_with_zero(self):
         self.assertEqual(fc.markup_sentence(self.sentences[0])[1],self.spans[0])
-    
+    def create_list_of_markups_equals_self_markups(self):
+        self.assertEqual(self.markups, fc.create_list_of_markups(self.sentences))
+
+
+    def test_context_doc_get_markups_same_length_as_spans(self):
+        self.assertEqual(len(self.document.getSectionMarkups()),len(self.spans))
+    def test_context_doc_get_markups_equals_enumerate_self_markups(self):
+        self.assertEqual(list(enumerate(self.markups)),self.document.getSectionMarkups())
+        
         
     def test_pipeline_default_preprocessor_returns_lower_case(self):
         preprocessor  = lambda x: x.lower()
