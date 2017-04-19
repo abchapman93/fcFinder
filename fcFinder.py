@@ -39,14 +39,15 @@ modifiers = itemData.instantiateFromCSVtoitemData(\
 targets = itemData.instantiateFromCSVtoitemData(\
     "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
 
-def markup_sentence(s,i,modifiers=modifiers, targets=targets, prune_inactive=True):
+def markup_sentence(s,i=None,modifiers=modifiers, targets=targets, prune_inactive=True):
     """s is the text from a split sentence
-    i is the tuple of the span of the sentence
+    i is the tuple of the span of the sentence. Optional.
     """
 
     markup = pyConText.ConTextMarkup()
     markup.setRawText(s)
-    markup.setDocSpan(i) #this is an added feature that is not in the original pyConTextNLP code
+    if i:
+        markup.setDocSpan(i) #this is an added feature that is not in the original pyConTextNLP code
     markup.cleanText() #add your own cleanText function in helpers
     markup.markItems(modifiers, mode="modifier")
     markup.markItems(targets, mode="target")
@@ -295,3 +296,5 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
 
     XMLstring = prettify(root)
     return XMLstring
+    
+

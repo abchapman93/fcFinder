@@ -11,7 +11,8 @@ Created on Mon Feb  6 10:16:35 2017
 import re
 import os
 import random
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
+
 
 def preprocess(report):
     """Preprocesses a report for annotation
@@ -102,7 +103,45 @@ def preprocess_batches(inpath,outpath):
     print("You edited %d batches"%counter)
     return outpath
 
-def my_sentence_splitter(text):
+def my_sentence_splitter(text,termination_points='.!~?'):
+    """Concatenates a text character by character. Sentences end at a termination point
+        APR 19: Changed from dictionary to list of tuples. See my_old_sentence_splitter for changes.
+        Returns a list of namedtuples with the following fields:
+            sentence: the text of a sentence
+            span: a tuple of the beginning and end of the sentence span
+        This can then be passed to pyConText to keep track of the original span of the TagObjects."""
+    i = 0 #variable that will just keep track of where we are in the report
+    start_span = 0
+    end_span = 0
+    iteration = 0
+    current_sentence = ''
+    current_character = text[end_span]
+    sentences = []
+    SentenceSpanPair = namedtuple('SentenceSpanPair', ['text','span'])
+    
+    while end_span < len(text):
+        if current_character in termination_points:
+            end_span += 1 #one for the current character, one for a whitespace
+            current_sentence = text[start_span:end_span]
+            sentences.append(
+               SentenceSpanPair(text=current_sentence, span=(start_span, end_span)))
+            start_span = end_span + 1
+            i += 1
+            iteration += 1
+            try:
+                current_character = text[start_span]
+            except IndexError:
+                pass
+        else:
+            end_span += 1
+            i += 1
+            try:
+                current_character = text[end_span]
+            except IndexError:
+                pass
+    return sentences
+    
+def my_old_sentence_splitter(text):
     """Concatenates a text character by character. Sentences end at a termination point
         Returns an OrderedDictionary: Keys are the sentence strings, values are their span in the document
         This can then be passed to pyConText to keep track of the original span of the TagObjects."""
