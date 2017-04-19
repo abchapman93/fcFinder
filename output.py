@@ -7,10 +7,22 @@ Created on Wed Apr 19 10:24:52 2017
 """
 
 import os, sys
+import numpy as np
 sys.path.append(os.getcwd())
 import fcFinder as fc
 
-def writeKnowtator(annotations,text_source): #test_source should be read automatically from the XML string
+def fc_vectorizer(annotations,classes):
+    arr = np.zeros((len(classes),1))
+    arr = np.ravel(arr)
+    for i in range(len(classes)):
+        for a in annotations:
+            if a == classes[i]:
+                arr[i] += 1
+    return arr
+    """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
+    Outputs a vector of annotation counts for each class argument."""
+    
+def write_knowtator(annotations,text_source): #test_source should be read automatically from the XML string
     """Writes a .txt.knowtator.xml file for all annotations in a document
     Takes a list of mentionAnnotation objects, a source file name, and an outpath.
     2/3/17: returns a single ElementTree Element object.

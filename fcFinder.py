@@ -35,15 +35,15 @@ from xml.dom import minidom
 
 DATADIR = os.path.join(os.path.expanduser('~'),'Box Sync','Bucher_Surgical_MIMICIII','pyConText_implement','fcFinder')
 modifiers = itemData.instantiateFromCSVtoitemData(\
-"/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/modifiers.tsv")
+"/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/modifiers.tsv")
 targets = itemData.instantiateFromCSVtoitemData(\
-    "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/targets.tsv")
+    "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
 
 def markup_sentence(s,i,modifiers=modifiers, targets=targets, prune_inactive=True):
     """s is the text from a split sentence
-    r is the tuple of the span of the sentence
+    i is the tuple of the span of the sentence
     """
-    
+
     markup = pyConText.ConTextMarkup()
     markup.setRawText(s)
     markup.setDocSpan(i) #this is an added feature that is not in the original pyConTextNLP code
@@ -67,24 +67,24 @@ def create_context_doc(report,modifiers=modifiers,targets=targets):
     markups = []
     for n in range(len(sentences)):
         s = sentences[n]
-        
+
         i = spans[n]
         m = markup_sentence(s.lower(), i, modifiers=modifiers, targets=targets)
-        
+
         markups.append(m)
     for m in markups:
         context_doc.addMarkup(m)
     return context_doc
-    
-    
+
+
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
     """
     rough_string = ElementTree.tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="    ")
-    
-    
+
+
 class mentionAnnotation(object):
     def __init__(self,tagObject,textSource=None,mentionClass=None,mentionid=None,annotatorid='FC_FINDER',span=None,
                  spannedText=None,creationDate=None,XML=None,MentionXML=None):
@@ -116,7 +116,7 @@ class mentionAnnotation(object):
         mentionID = SubElement(annotation_body, 'mention')
         mentionID.set('id',self.getMentionID()) #perhaps this needs to follow eHOST's schema
         annotatorID = SubElement(annotation_body,"annotator")
-        annotatorID.set('id','eHOST_2010') 
+        annotatorID.set('id','eHOST_2010')
         annotatorID.text = self.getAnnotatorID()
         span = SubElement(annotation_body, "span",{"start":str(self.getSpan()[0]),"end":str(self.getSpan()[1])}) #Why is this backwards?
         spannedText=SubElement(annotation_body,'spannedText')
@@ -135,9 +135,9 @@ class mentionAnnotation(object):
     def getTextSource(self):
         return self.textSource
     def getMentionClass(self):
-        return self.mentionClass    
+        return self.mentionClass
     def getMentionID(self):
-        return self.mentionid    
+        return self.mentionid
     def getText(self):
         return self.spannedText
     def getSpan(self):
@@ -150,7 +150,7 @@ class mentionAnnotation(object):
         return self.XML
     def getMentionXML(self):
         return self.MentionXML
-    
+
     def stringXML(self):
         def prettify(elem):
             """Return a pretty-printed XML string for the Element.
@@ -185,7 +185,7 @@ def fluid_collection_classifier(document,source_file):
     annotations = []
     completed_spans = []
     markups = [m[1] for m in document.getSectionMarkups()]
-    
+
     for m in markups:
         for tO in m.nodes():
             if tO.getCategory() == ['fluid_collection']:
@@ -241,18 +241,18 @@ def fluid_collection_classifier(document,source_file):
             annotations.remove(_)
     return annotations
 
-    
+
 def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_class will be defined by the logic
     """Takes a ConTextMarkup object and returns a single annotation object.
     This will have to be modified for classes other than definiiveEvidence
     2/24: cut down the unnecessary if statements"""
     #annotations = []
-    
+
     annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
                                     mentionid=tO.getTagID(), spannedText=markup.getText(),
                                     span=markup.getDocSpan())
     return annotation
-    
+
 def getXML(annotation): #text source should be at the document level
         return annotationXMLSkel.format(annotation.getTextSource(),annotation.getMentionID(),
                 annotation.getAnnotatorID(),annotation.getSpan()[0],annotation.getSpan()[1],
@@ -263,7 +263,7 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
     Takes a list of mentionAnnotation objects, a source file name, and an outpath.
     2/3/17: returns a single ElementTree Element object.
     Need to be able to turn this into a string."""
-    
+
     root = Element('annotations')
     root.set('textSource',text_source)
     for annotation in annotations:
@@ -272,8 +272,8 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
             root.append(annotation.getMentionXML())   ####Bring this back later!!!
         except AttributeError:
             pass
-    
-        
+
+
     adjudication_status = SubElement(root,'eHOST_Adjudication_Status')
     adjudication_status.set('version','1.0')
     selected_annotators = SubElement(adjudication_status,'Adjudication_Selected_Annotators')
@@ -281,7 +281,7 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
     selected_classes = SubElement(adjudication_status,'Adjudication_Selected_Classes')
     selected_classes.set('version','1.0')
     adjudication_others = SubElement(adjudication_status,'Adjudication_Others')
-    
+
     check_spans = SubElement(adjudication_others,'CHECK_OVERLAPPED_SPANS')
     check_spans.text = 'false'
     check_attributes = SubElement(adjudication_others,'CHECK_ATTRIBUTES')
@@ -292,11 +292,6 @@ def writeKnowtator(annotations,text_source): #test_source should be read automat
     check_class.text = 'false'
     check_comment = SubElement(adjudication_others,'CHECK_COMMENT')
     check_comment.text = 'false'
-    
+
     XMLstring = prettify(root)
     return XMLstring
-
-
-
-
-
