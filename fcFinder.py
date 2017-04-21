@@ -19,6 +19,7 @@ from pyConTextNLP.pyConTextGraph import ConTextMarkup
 import pyConTextNLP.itemData as itemData
 import os
 import helpers
+#from rules import markup_conditions, markup_classifier
 
 import re
 import copy
@@ -51,9 +52,6 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     #MarkupSpanPair = namedtuple('MarkupSpanPair',['markup','span'])
     markup = pyConText.ConTextMarkup()
     markup.setRawText(s)
-    #if i:
-        #markup.setDocSpan(i) #this is an added feature that is not in the original pyConTextNLP code
-    #APR 19: to make this more compatible with the original pyConText, stopped using i as an attribute of markup
     if not span:
         span = (0,len(s))
     markup.docSpan = span
@@ -63,15 +61,15 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     markup.markItems(targets, mode="target")
     markup.pruneMarks()
     markup.dropMarks('Exclusion')
-    # apply modifiers to any targets within the modifiers scope
     markup.applyModifiers()
     markup.pruneSelfModifyingRelationships()
     if prune_inactive:
         markup.dropInactiveModifiers()
+    markup.markupClass = markup_classifier(markup)
     return markup
     #return MarkupSpanPair(markup=markup,span=span)
 
-def create_list_of_markups(sentences,spans=None):
+def create_list_of_markups(sentences,spans=False):
     """Takes a list of sentences and returns a list of markups.
     If you are passing in document spans for each sentence, set spans = True and
     pass sentences as a list oftwo-tuples with the sentence in index 0. 
@@ -82,7 +80,8 @@ def create_list_of_markups(sentences,spans=None):
 
     if spans:
         markups = [markup_sentence(s=x[0],span=x[1]) for x in sentences]
-    markups = [markup_sentence(x) for x in sentences]
+    else:
+        markups = [markup_sentence(x) for x in sentences]
     return markups
 
 def create_context_doc(list_of_markups,modifiers=modifiers,targets=targets):
@@ -91,36 +90,97 @@ def create_context_doc(list_of_markups,modifiers=modifiers,targets=targets):
     for m in list_of_markups:
         context_doc.addMarkup(m)
     return context_doc
-
-
-def fcPipeline(reports,preprocess=lambda x:x.lower(),splitter=lambda x:x.split('.'),
-               output=None):
-    """A simple, generic pipeline that can be used with the fcFinder module.
-    Takes a single report as a string, ends with an output function"""
-    report = preprocess(report)
-    sentences = [splitter(r) for r in report]
-    markups = create_list_of_markups(sentences) 
-    document = create_context_doc(markups)
-    
-    return document
     
 
-    
-    
-    
-    
-
-def prettify(elem):
-    """Return a pretty-printed XML string for the Element.
+class markup_conditions(object):
+    """This class creates the conditions of interest for a markup.
+    A rule-based classifier can then assign a class to a markup based on rules
+    pertaining to these conditions.
     """
-    rough_string = ElementTree.tostring(elem, 'utf-8')
-    reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="    ")
+    def __init__(self,markup=None, target_values=[['fluid_collection']], target=None,
+                 tag_objects=[], definitive=False, historical=False,probable=False, negated=False,
+                 indication=False, anatomy=False, pseudoanatomy=False):
+        self.markup=markup
+        self.tag_objects=tag_objects
+        self.target_values=target_values
+        self.target=target
+        self.definitive=definitive
+        self.historical=historical
+        self.probable=probable
+        self.negated=negated
+        self.indication=indication
+        self.anatomy=anatomy
+        self.pseudoanatomy=pseudoanatomy
+        
+        self.set_target()
+        if self.target:
+            self.set_anatomy()
+            self.set_definitive()
+            self.set_negated()
+            self.set_indication()
+            self.set_pseudoanatomy()
+
+    def set_target(self): #These rules should be customized
+        for tag_object in self.markup.nodes():
+            if tag_object.getCategory() in self.target_values: #could be changed for multiple target values
+                self.target = tag_object
+    def set_anatomy(self):
+        if self.markup.isModifiedByCategory(self.target,'anatomy'):
+            self.anatomy = True
+    def set_definitive(self):
+        if self.markup.isModifiedByCategory(self.target,'definitive_existence'):
+            self.definitive = True
+    def set_negated(self):
+        if self.markup.isModifiedByCategory(self.target,'definite_negated_existence'):
+            self.negated = True
+    def set_indication(self):
+        if self.markup.isModifiedByCategory(self.target,'indication'):
+            self.indication = True
+    def set_pseudoanatomy(self):
+        if self.markup.isModifiedByCategory(self.target,'pseudoanatomy'):
+            self.pseudoanatomy = True
+            
+def markup_classifier(markup):
+    """Takes a markup object and classifies according to logic defined below.
+    Should be customized for implementation.
+    Note the lower capitalization of fluid collection-indication; this is only to match
+    the annotations made in the gold standard for this project."""
+    conditions = markup_conditions(markup)
+    
+    markup_class = None
+    if not conditions.target:
+        pass
+    #positive
+    elif (conditions.anatomy and not conditions.negated and not conditions.indication)\
+        or (conditions.anatomy and conditions.definitive):
+        markup_class = "Fluid collection-positive"
+        
+    #negated
+    elif conditions.negated and not conditions.definitive:
+        markup_class = "Fluid collection-negated"
+    
+    #indication
+    elif conditions.indication and not (conditions.negated or conditions.definitive
+                                or conditions.historical or conditions.probable):
+        markup_class = "fluid collection-indication"
+        
+    #check for pseudoanatomy
+    if conditions.pseudoanatomy and not conditions.anatomy:
+        markup_class = None
+    return markup_class
 
 
 
-
-
+def my_pipeline(report, preprocess=lambda x:x.lower(), 
+                splitter=helpers.my_sentence_splitter):
+    report = preprocess(report)
+    sentences = splitter(report)
+    markups = create_list_of_markups(sentences,spans=True)
+    markups = [m for m in markups if m.markupClass]
+    #classified_markups = 
+    #document = create_context_doc(markups)
+    #markups = 
+    return markups
 
 
 

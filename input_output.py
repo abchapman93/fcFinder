@@ -4,12 +4,51 @@
 Created on Wed Apr 19 10:24:52 2017
 
 @author: alec
+
+This module contains functions for input and output.
 """
 
 import os, sys
+import glob
+import sqlite3 as sqlite
 import numpy as np
 sys.path.append(os.getcwd())
 import fcFinder as fc
+
+
+def read_file(inpath):
+    with open(inpath,'r') as f:
+        text = f.read()
+    return text
+    
+def read_batch_of_files(DIR):
+    """Reads in an entire batch of text files as a list of strings"""
+    files = glob.glob(os.path.join(DIR,'*.txt'))
+    texts = []
+    for f in files:
+        with open(f,'r') as f:
+            texts.append(f.read())
+    return texts
+    
+def read_sqlite(db, view=None,query=None):
+    """Allows the user to select notes from a sqlite database using either 
+    prewritten views or a custom query.
+    Parameters:
+        conn - database connection
+        view - integer specifying which prewritten query to use. Default None.
+        query - Custom string query"""
+    conn = sqlite.connect(db)
+    cursor = conn.cursor()
+    if view and query:
+        raise ValueError("View and query cannot both be defined.")
+    if query:
+        cursor.execute(query)
+    if view == 1:
+        cursor.execute("""SELECT text FROM training_notes""")
+    if view == 2:
+        cursor.execute("""SELECT text FROM testing_notes""")
+    texts = [x[0] for x in cursor.fetchall()]
+    return texts
 
 def fc_vectorizer(annotations,classes):
     """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
@@ -24,7 +63,8 @@ def fc_vectorizer(annotations,classes):
     
 
    
-def createAnnotation(markup,tO,mention_class,file_name): #eventually mention_class will be defined by the logic
+#eHOST KNOWTATOR XML
+def createAnnotation(markup,tO,file_name): #eventually mention_class will be defined by the logic
     """Takes a ConTextMarkup object and returns a single annotation object.
     This will have to be modified for classes other than definiiveEvidence
     2/24: cut down the unnecessary if statements"""

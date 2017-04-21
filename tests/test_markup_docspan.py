@@ -14,7 +14,7 @@ sys.path.append(os.path.join(os.getcwd(),'..'))
 import fcFinder as fc
 import helpers
 import rules
-import output
+import input_output as io
 import pyConTextNLP.itemData as itemData
 import pyConTextNLP.pyConTextGraph as pyConText
 from collections import namedtuple
@@ -40,5 +40,10 @@ class MarkupObjectTest(unittest.TestCase):
         self.assertIsInstance(self.first_markup.docSpan,tuple)
     def test_default_markup_sentence_span_starts_with_zero(self):
         self.assertEqual(fc.markup_sentence(self.sentences[0]).docSpan,self.spans[0])
-    def create_list_of_markups_equals_self_markups(self):
-        self.assertEqual(self.markups, fc.create_list_of_markups(self.sentences))
+    def test_length_of_create_list_of_markups_equals_length_of_self_markups(self):
+        self.assertEqual(len(self.markups), len(fc.create_list_of_markups(self.sentences)))
+        
+    def test_markup_has_markupclass(self):
+        self.assertIsNotNone(self.first_markup.markupClass)
+    def test_first_markup_has_markupclass_positive(self):
+        self.assertEqual(self.first_markup.markupClass,"Fluid collection-positive")
