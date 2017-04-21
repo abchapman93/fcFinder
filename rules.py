@@ -6,82 +6,85 @@ Created on Wed Apr 19 15:18:50 2017
 @author: alec
 
 This module contains classes that define the rules for classifying sentences
-based on fcFinder findings.
+based on fcFinder findings. An implementation can include its own custom classifiers.
 
 The function below should eventually be replaced by more generic rules.
 """
 
 import os
 
-def fluid_collection_classifier(document,source_file):
-    """Takes a ConTextDocument and returns the following unique sets of mentionAnnotation objects:
-    definitive_evidence: markups that are classified as definitive evidence of fluid collection.
-    negated_evidence: markups that are classified as negated evidence of fluid collection.
-    indication: markups that are classified as indication of fluid collection.
-    MARCH 1: CHANGED DEFINITIVE, PROBABLE AND HISTORICAL TO POSITIVE
-    ignored: markups that contain target words but are unmodified by any modifiers"""
-    definite_evidence = 0
-    negated_evidence = 0
-    indication = 0
-    historical = 0
-    probable = 0
-    ignored = 0
+class markup_conditions(object):
+    """This class creates the conditions of interest for a markup.
+    A rule-based classifier can then assign a class to a markup based on rules
+    pertaining to these conditions.
+    """
+    def __init__(self,markup=None, target_values=[['fluid_collection']], target=None,
+                 tag_objects=[], definitive=False, historical=False,probable=False, negated=False,
+                 indication=False, anatomy=False, pseudoanatomy=False):
+        self.markup=markup
+        self.tag_objects=tag_objects
+        self.target_values=target_values
+        self.target=target
+        self.definitive=definitive
+        self.historical=historical
+        self.probable=probable
+        self.negated=negated
+        self.indication=indication
+        self.anatomy=anatomy
+        self.pseudoanatomy=pseudoanatomy
+        
+        self.set_target()
+        if self.target:
+            self.set_anatomy()
+            self.set_definitive()
+            self.set_negated()
+            self.set_indication()
+            self.set_pseudoanatomy()
 
-    annotations = []
-    completed_spans = []
-    markups = [m[1] for m in document.getSectionMarkups()]
+    def set_target(self): #These rules should be customized
+        for tag_object in self.markup.nodes():
+            if tag_object.getCategory() in self.target_values: #could be changed for multiple target values
+                self.target = tag_object
+    def set_anatomy(self):
+        if self.markup.isModifiedByCategory(self.target,'anatomy'):
+            self.anatomy = True
+    def set_definitive(self):
+        if self.markup.isModifiedByCategory(self.target,'definitive_existence'):
+            self.definitive = True
+    def set_negated(self):
+        if self.markup.isModifiedByCategory(self.target,'definite_negated_existence'):
+            self.negated = True
+    def set_indication(self):
+        if self.markup.isModifiedByCategory(self.target,'indication'):
+            self.indication = True
+    def set_pseudoanatomy(self):
+        if self.markup.isModifiedByCategory(self.target,'pseudoanatomy'):
+            self.pseudoanatomy = True
+            
+def markup_classifier(conditions):
+    """Takes a markup_conditions object and classifies according to logic defined below.
+    Should be customized for implementation.
+    Note the lower capitalization of fluid collection-indication; this is only to match
+    the annotations made in the gold standard for this project."""
+    markup_class = None
+    
+    #positive
+    if (conditions.anatomy and not conditions.negated and not conditions.indication)\
+        or (conditions.anatomy and conditions.definitive):
+        markup_class = "Fluid collection-positive"
+        
+    #negated
+    elif conditions.negated and not conditions.definitive:
+        markup_class = "Fluid collection-negated"
+    
+    #indication
+    elif conditions.indication and not (conditions.negated or conditions.definitive
+                                or conditions.historical or conditions.probable):
+        markup_class = "fluid collection-indication"
+        
+    #check for pseudoanatomy
+    if conditions.pseudoanatomy and not conditions.anatomy:
+        markup_class = None
+    return markup_class
+    
 
-    for m in markups:
-        for tO in m.nodes():
-            if tO.getCategory() == ['fluid_collection']:
-                annotation = None
-                if '?' in m.getRawText():
-                    annotation = createAnnotation(m,tO,"fluid collection-indication",source_file)
-                    indication += 1
-                elif m.isModifiedByCategory(tO,"definite_existence"):
-                    if m.isModifiedByCategory(tO,'anatomy'):
-                        annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                        definite_evidence += 1
-                else:
-                    if m.isModifiedByCategory(tO,"definite_negated_existence"):
-                        annotation = createAnnotation(m,tO,"Fluid collection-negated",source_file)
-                        negated_evidence += 1
-                    elif m.isModifiedByCategory(tO, "indication"):
-                        annotation = createAnnotation(m,tO,"fluid collection-indication",source_file)
-                        indication += 1
-                    elif m.isModifiedByCategory(tO,"probable_existence"):
-                        if m.isModifiedByCategory(tO,"anatomy"):
-                            annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                            probable += 1
-                        else:
-                            ignored += 1
-                            annotation = None
-                    elif m.isModifiedByCategory(tO,"historical"):
-                        if m.isModifiedByCategory(tO,"anatomy"):
-                            annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                            historical += 1
-                        else:
-                            annotation = None
-                            ignored += 1
-                    else:
-                        if m.isModifiedByCategory(tO,'anatomy'):
-                            annotation = createAnnotation(m,tO,"Fluid collection-positive",source_file)
-                            definite_evidence += 1
-                        else:
-                            annotation = None
-                            ignored += 1
-                    if m.isModifiedByCategory(tO,'pseudoanatomy'):
-                        if not m.isModifiedByCategory(tO,'anatomy'):
-                            annotation = None
-                        else:
-                            annotation = annotation
-                if annotation:
-                    if m.getDocSpan() in completed_spans:
-                        pass
-                    else:
-                        completed_spans.append(m.getDocSpan())
-                        annotations.append(annotation)
-    for _ in annotations:
-        if _ == 'false':
-            annotations.remove(_)
-    return annotations

@@ -12,7 +12,7 @@ sys.path.append(os.getcwd())
 import fcFinder as fc
 
 def fc_vectorizer(annotations,classes):
-     """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
+    """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
     Outputs a vector of annotation counts for each class argument."""
     arr = np.zeros((len(classes),1))
     arr = np.ravel(arr)

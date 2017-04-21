@@ -48,7 +48,7 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     where this function just returns a markup object.
     This is to allow the user to keep track of the original span from the document.
     """
-    MarkupSpanPair = namedtuple('MarkupSpanPair',['markup','span'])
+    #MarkupSpanPair = namedtuple('MarkupSpanPair',['markup','span'])
     markup = pyConText.ConTextMarkup()
     markup.setRawText(s)
     #if i:
@@ -56,6 +56,8 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     #APR 19: to make this more compatible with the original pyConText, stopped using i as an attribute of markup
     if not span:
         span = (0,len(s))
+    markup.docSpan = span
+    
     markup.cleanText() #add your own cleanText function in helpers
     markup.markItems(modifiers, mode="modifier")
     markup.markItems(targets, mode="target")
@@ -66,11 +68,21 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     markup.pruneSelfModifyingRelationships()
     if prune_inactive:
         markup.dropInactiveModifiers()
-    return MarkupSpanPair(markup=markup,span=span)
+    return markup
+    #return MarkupSpanPair(markup=markup,span=span)
 
-def create_list_of_markups(sentences):
-    """Takes a list of sentences and returns a list of markups."""
-    markups = [markup_sentence(s).markup for s in sentences]
+def create_list_of_markups(sentences,spans=None):
+    """Takes a list of sentences and returns a list of markups.
+    If you are passing in document spans for each sentence, set spans = True and
+    pass sentences as a list oftwo-tuples with the sentence in index 0. 
+    Example:
+        [ ..., ('There is a fluid collection near the abdomen.', (56, 72)), 
+           (No rim enhancement can be seen.', (73, 86)),... ] 
+    """
+
+    if spans:
+        markups = [markup_sentence(s=x[0],span=x[1]) for x in sentences]
+    markups = [markup_sentence(x) for x in sentences]
     return markups
 
 def create_context_doc(list_of_markups,modifiers=modifiers,targets=targets):
