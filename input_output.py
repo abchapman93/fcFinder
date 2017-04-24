@@ -60,19 +60,29 @@ def fc_vectorizer(annotations,classes):
             if a == classes[i]:
                 arr[i] += 1
     return arr
-    
 
-   
-#eHOST KNOWTATOR XML
-def createAnnotation(markup,tO,file_name): #eventually mention_class will be defined by the logic
+#need to get the target tag object from the markup
+    
+def createAnnotation(markup,file_name): #eventually mention_class will be defined by the logic
     """Takes a ConTextMarkup object and returns a single annotation object.
     This will have to be modified for classes other than definiiveEvidence
     2/24: cut down the unnecessary if statements"""
     #annotations = []
 
-    annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
+    annotation = mentionAnnotation(textSource=file_name,mentionClass=markup.markupClass,
                                     mentionid=tO.getTagID(), spannedText=markup.getText(),
-                                    span=markup.getDocSpan())
+                                    span=markup.markupClass())
+   
+#eHOST KNOWTATOR XML
+#def createAnnotation(markup,tO,file_name): #eventually mention_class will be defined by the logic
+#    """Takes a ConTextMarkup object and returns a single annotation object.
+#    This will have to be modified for classes other than definiiveEvidence
+#    2/24: cut down the unnecessary if statements"""
+#    #annotations = []
+#
+#    annotation = mentionAnnotation(tagObject=tO,textSource=file_name,mentionClass=mention_class,
+#                                    mentionid=tO.getTagID(), spannedText=markup.getText(),
+#                                    span=markup.getDocSpan())
     return annotation
     
 class mentionAnnotation(object):

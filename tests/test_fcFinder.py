@@ -105,14 +105,12 @@ class MarkupConditionssTest(unittest.TestCase):
     
     def test_default_target_values_is_fluid_collection(self):
         self.assertEqual([['fluid_collection']],self.classifier.target_values)
-    def test_default_tag_objects_is_empty(self):
-        self.assertEqual([],self.classifier.tag_objects)
     def test_target_default_is_none(self):
         self.assertFalse(self.classifier.target)
     def test_default_attributes_not_markup_are_false(self):
         attributes = list(self.classifier.__dict__.keys())
         for a in attributes:
-            if a not in ['markup','target_values','tag_objects']:
+            if a not in ['markup','target_values','tag_objects','modifiers']:
                 self.assertFalse(self.classifier.__dict__[a])
                 
 
@@ -169,7 +167,7 @@ class MarkupConditionssTest(unittest.TestCase):
         i_classifier = fc.markup_conditions(markup=i_markup)
         attributes = list(i_classifier.__dict__.keys())
         for a in attributes:
-            if a != 'target_values':
+            if a not in ['target_values','modifiers']:
                 self.assertFalse(i_classifier.__dict__[a])
                 
     def test_first_sentence_markup_class_is_positive(self):
@@ -188,8 +186,11 @@ class MarkupConditionssTest(unittest.TestCase):
     def test_indication_with_pseudo_anatomy_is_none(self): #this pseudo rule is not working
         pseudo_sentence = "Evaluate for sternal fluid collection."
         pseudo_markup = fc.markup_sentence(pseudo_sentence)
-        pseudo_conditions = fc.markup_conditions(markup=pseudo_markup)
+        #pseudo_conditions = fc.markup_conditions(markup=pseudo_markup)
         self.assertIsNone(pseudo_markup.markupClass)
+        
+    def test_markup_has_target(self):
+        self.assertIsNotNone(self.first_markup.target)
         
 class firstPipelineTest(unittest.TestCase):
     def setUp(self):
@@ -197,7 +198,7 @@ class firstPipelineTest(unittest.TestCase):
         file = os.path.join(DATADIR, 'corpus', 'Yes_74976_148937_02-28-66.txt')
         with open(file,'r') as f:
             report = f.read()
-        pipeline = fc.my_pipeline
+        pipeline = fc.fc_pipeline
         self.markups = pipeline(report)
     def test_markups_all_have_classes(self):
         for m in self.markups:
@@ -214,7 +215,7 @@ class secondPipelineTest(unittest.TestCase):
         file = os.path.join(DATADIR, 'corpus','No_10792_131562_05-29-20.txt')
         with open(file,'r') as f:
             report = f.read()
-        pipeline = fc.my_pipeline
+        pipeline = fc.fc_pipeline
         self.markups = pipeline(report)
     def test_negated_count_is_two(self):
         negated_mentions = [x for x in self.markups if x.markupClass == 'Fluid collection-negated']

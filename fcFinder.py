@@ -65,7 +65,12 @@ def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inac
     markup.pruneSelfModifyingRelationships()
     if prune_inactive:
         markup.dropInactiveModifiers()
-    markup.markupClass = markup_classifier(markup)
+        
+    markup.conditions = markup_conditions(markup)
+    markup.target = markup.conditions.target
+    markup.modifiers = markup.conditions.modifiers #markup_classifier(markup)
+    markup.markupClass = markup_classifier(markup.conditions)
+    
     return markup
     #return MarkupSpanPair(markup=markup,span=span)
 
@@ -98,10 +103,10 @@ class markup_conditions(object):
     pertaining to these conditions.
     """
     def __init__(self,markup=None, target_values=[['fluid_collection']], target=None,
-                 tag_objects=[], definitive=False, historical=False,probable=False, negated=False,
+                 modifiers=[], definitive=False, historical=False,probable=False, negated=False,
                  indication=False, anatomy=False, pseudoanatomy=False):
         self.markup=markup
-        self.tag_objects=tag_objects
+        self.modifiers=modifiers
         self.target_values=target_values
         self.target=target
         self.definitive=definitive
@@ -112,7 +117,7 @@ class markup_conditions(object):
         self.anatomy=anatomy
         self.pseudoanatomy=pseudoanatomy
         
-        self.set_target()
+        self.set_target_and_modifiers()
         if self.target:
             self.set_anatomy()
             self.set_definitive()
@@ -120,10 +125,12 @@ class markup_conditions(object):
             self.set_indication()
             self.set_pseudoanatomy()
 
-    def set_target(self): #These rules should be customized
+    def set_target_and_modifiers(self): #These rules should be customized
         for tag_object in self.markup.nodes():
             if tag_object.getCategory() in self.target_values: #could be changed for multiple target values
                 self.target = tag_object
+            else:
+                self.modifiers.append(tag_object)
     def set_anatomy(self):
         if self.markup.isModifiedByCategory(self.target,'anatomy'):
             self.anatomy = True
@@ -140,14 +147,15 @@ class markup_conditions(object):
         if self.markup.isModifiedByCategory(self.target,'pseudoanatomy'):
             self.pseudoanatomy = True
             
-def markup_classifier(markup):
-    """Takes a markup object and classifies according to logic defined below.
+def markup_classifier(conditions):
+    """Takes a markup conditions object and classifies according to logic defined below.
     Should be customized for implementation.
     Note the lower capitalization of fluid collection-indication; this is only to match
     the annotations made in the gold standard for this project."""
-    conditions = markup_conditions(markup)
+    #conditions = markup_conditions(markup)
     
     markup_class = None
+    #markup.target = conditions.target #apr23 added this
     if not conditions.target:
         pass
     #positive
@@ -171,7 +179,7 @@ def markup_classifier(markup):
 
 
 
-def my_pipeline(report, preprocess=lambda x:x.lower(), 
+def fc_pipeline(report, preprocess=lambda x:x.lower(), 
                 splitter=helpers.my_sentence_splitter):
     report = preprocess(report)
     sentences = splitter(report)

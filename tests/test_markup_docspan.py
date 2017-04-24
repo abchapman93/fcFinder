@@ -13,7 +13,7 @@ import numpy as np
 sys.path.append(os.path.join(os.getcwd(),'..'))
 import fcFinder as fc
 import helpers
-import rules
+#import rules
 import input_output as io
 import pyConTextNLP.itemData as itemData
 import pyConTextNLP.pyConTextGraph as pyConText

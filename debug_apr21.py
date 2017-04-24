@@ -11,7 +11,7 @@ import sys
 sys.path.append(os.path.join(os.getcwd(),'..'))
 import fcFinder as fc
 import helpers
-import rules
+#import rules
 import input_output as io
 
 DATADIR = '/Users/alec/Desktop/fcfinder_apr21'
@@ -20,6 +20,13 @@ outdir = os.path.join(DATADIR,'saved')
 with open(file,'r') as f:
     report = f.read()
     
-pipeline = fc.my_pipeline
+pipeline = fc.fc_pipeline
 findings = pipeline(report)
 
+annotations = []
+for f in findings:
+    annotations.append(io.createAnnotation(f,'Yes_74976_148937_02-28-66.txt'))
+#annotations = []
+#for f in findings:
+#    annotation = io.createAnnotation(f)
+#    annotations.append(annotation)
