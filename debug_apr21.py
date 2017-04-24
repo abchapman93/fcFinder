@@ -26,6 +26,11 @@ findings = pipeline(report)
 annotations = []
 for f in findings:
     annotations.append(io.createAnnotation(f,'Yes_74976_148937_02-28-66.txt'))
+
+for a in annotations:
+    XMLstring = io.write_knowtator(annotations,'Yes_74976_148937_02-28-66.txt')
+    with open(os.path.join(outdir,'Yes_74976_148937_02-28-66.txt.knowtator.xml'),'w') as f0:
+        f0.write(XMLstring)
 #annotations = []
 #for f in findings:
 #    annotation = io.createAnnotation(f)

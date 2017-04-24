@@ -13,6 +13,10 @@ import glob
 import sqlite3 as sqlite
 import numpy as np
 sys.path.append(os.getcwd())
+import time
+import xml.etree.ElementTree as ElementTree
+from xml.etree.ElementTree import Element, SubElement
+from xml.dom import minidom
 import fcFinder as fc
 
 
@@ -69,9 +73,9 @@ def createAnnotation(markup,file_name): #eventually mention_class will be define
     2/24: cut down the unnecessary if statements"""
     #annotations = []
 
-    annotation = mentionAnnotation(textSource=file_name,mentionClass=markup.markupClass,
-                                    mentionid=tO.getTagID(), spannedText=markup.getText(),
-                                    span=markup.markupClass())
+    annotation = mentionAnnotation(markup,textSource=file_name,mentionClass=markup.markupClass,
+                                    mentionid=markup.target.getTagID(), spannedText=markup.getText(),
+                                    span=markup.docSpan)
    
 #eHOST KNOWTATOR XML
 #def createAnnotation(markup,tO,file_name): #eventually mention_class will be defined by the logic
@@ -86,9 +90,11 @@ def createAnnotation(markup,file_name): #eventually mention_class will be define
     return annotation
     
 class mentionAnnotation(object):
-    def __init__(self,tagObject,textSource=None,mentionClass=None,mentionid=None,annotatorid='FC_FINDER',span=None,
+    def __init__(self,markup,target=None,textSource=None,mentionClass=None,mentionid=None,annotatorid='FC_FINDER',span=None,
                  spannedText=None,creationDate=None,XML=None,MentionXML=None):
         """Creates an annotation of Object"""
+        self.markup=markup
+        self.target=None
         self.textSource = textSource
         self.mentionid = str(mentionid)
         self.mentionClass = mentionClass
@@ -101,6 +107,9 @@ class mentionAnnotation(object):
         self.setCreationDate()
         self.setXML()
         self.setMentionXML()
+        
+    def setTarget(self):
+        self.target = self.markup.target
     def setText(self,text):
         """Sets the text for spannedText"""
         self.spannedText = text
@@ -167,6 +176,13 @@ class mentionAnnotation(object):
         #rough_string = ElementTree.tostring(self.getXML(), 'utf-8')
         #reparsed = minidom.parseString(rough_string)
         #return reparsed.toprettyxml(indent="  ")
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ElementTree.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
 
 def write_knowtator(annotations,text_source): #test_source should be read automatically from the XML string
     """Writes a .txt.knowtator.xml file for all annotations in a document
