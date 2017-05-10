@@ -10,8 +10,7 @@ Created on Mon Feb  6 10:16:35 2017
 
 import re
 import os
-import random
-import fcFinder as fc
+import glob
 from collections import OrderedDict, namedtuple
 
 
@@ -27,8 +26,6 @@ def preprocess(report):
         """
 
     #1) delete new page header
-
-    txt = report
     header_exists = re.search("\(Over\)",report)
     while header_exists:
         #find the start of the word 'over'
@@ -96,12 +93,12 @@ def preprocess_batches(inpath,outpath):
         for file in files:
             with open(file,'r') as f1:
                 old_report = f1.read()
-                cleaned_report = helpers.preprocess(old_report)
+                cleaned_report = preprocess(old_report)
                 report_name = os.path.basename(file)
                 with open(os.path.join(outpath,batch_name,'corpus',report_name),'w') as f0:
                     f0.write(cleaned_report)
                 counter += 1
-    print("You edited %d batches"%counter)
+    print("You edited %d reports"%counter)
     return outpath
 
 def my_sentence_splitter(text,termination_points='.!~?'):
@@ -111,14 +108,18 @@ def my_sentence_splitter(text,termination_points='.!~?'):
             sentence: the text of a sentence
             span: a tuple of the beginning and end of the sentence span
         This can then be passed to pyConText to keep track of the original span of the TagObjects."""
-    i = 0 #variable that will just keep track of where we are in the report
+    i = 0
     start_span = 0
     end_span = 0
     iteration = 0
+    SentenceSpanPair = namedtuple('SentenceSpanPair', ['text','span'])
+    if len(text) == 0:
+        sentences = [SentenceSpanPair(text=' ',span=(start_span,end_span))]
+        return sentences
     current_sentence = ''
     current_character = text[end_span]
     sentences = []
-    SentenceSpanPair = namedtuple('SentenceSpanPair', ['text','span'])
+    
     
     while end_span < len(text):
         if current_character in termination_points:
@@ -189,18 +190,4 @@ def my_old_sentence_splitter(text):
             except IndexError:
                 pass
     return spans
-    
-###APR 19: Write a more complex pipeline for use
-    
-#
-#def pipeline(text,preprocesser=lambda x: x.lower(), sentence_splitter=my_sentence_splitter,
-#               markup_func=fc.markup_sentence):
-#    """,,markup_func
-#    A pipeline function that will execute the fcFinder system for a single report.
-#    Takes as arguments:
-#        text: a string report
-#        preprocesser: a function that returns a preprocessed text. Default is text.lower()
-#        sentence_splitter: a function that returns a list of split sentences. Default is a simple text.split('.')
-#        markup_func: a function that returns a pyConText markup for a single sentence.
-#    """
     

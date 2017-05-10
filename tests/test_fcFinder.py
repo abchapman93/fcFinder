@@ -12,13 +12,8 @@ import unittest
 import numpy as np
 sys.path.append(os.path.join(os.getcwd(),'..'))
 import fcFinder as fc
-#from fcFinder import markup_conditions, markup_classifier
 import helpers
-#import rules
-import io
-import pyConTextNLP.itemData as itemData
 import pyConTextNLP.pyConTextGraph as pyConText
-from collections import namedtuple
 
 class fcFinderTest(unittest.TestCase):
     def setUp(self):
@@ -26,11 +21,8 @@ class fcFinderTest(unittest.TestCase):
         self.sentenceSpanPairs = helpers.my_sentence_splitter(self.txt)
         self.sentences = [x.text for x in self.sentenceSpanPairs]
         self.spans = [x.span for x in self.sentenceSpanPairs]
-        #self.sentences = self.sentences.remove('')
-        self.modifiers = itemData.instantiateFromCSVtoitemData(
-                        "/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/modifiers.tsv")
-        self.targets = itemData.instantiateFromCSVtoitemData(
-                        "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
+        self.modifiers = fc.modifiers
+        self.targets = fc.targets
         self.markups = [fc.markup_sentence(x) for x in self.sentences]
         self.document = fc.create_context_doc(self.markups)
         
@@ -72,17 +64,14 @@ class fcFinderTest(unittest.TestCase):
 
         
         
-class MarkupConditionssTest(unittest.TestCase):
+class MarkupConditionsTest(unittest.TestCase):
     def setUp(self):
         self.txt = 'There is fluid collection in the abdomen. There is no hematoma near the liver. Evaluate for abscess.'
         self.sentenceSpanPairs = helpers.my_sentence_splitter(self.txt)
         self.sentences = [x.text for x in self.sentenceSpanPairs]
         self.spans = [x.span for x in self.sentenceSpanPairs]
-        #self.sentences = self.sentences.remove('')
-        self.modifiers = itemData.instantiateFromCSVtoitemData(
-                        "/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/modifiers.tsv")
-        self.targets = itemData.instantiateFromCSVtoitemData(
-                        "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
+        self.modifiers = fc.modifiers
+        self.targets = fc.targets        
         self.markups = [fc.markup_sentence(x) for x in self.sentences]
         self.document = fc.create_context_doc(self.markups)
         self.empty_markup = pyConText.ConTextMarkup()
@@ -180,13 +169,11 @@ class MarkupConditionssTest(unittest.TestCase):
     def test_indication_with_pseudoanatomy_has_pseudoanatomy(self):
         pseudo_sentence = "Evaluate for sternal fluid collection."
         pseudo_markup = fc.markup_sentence(pseudo_sentence)
-        #self.assertIsInstance(pseudo_markup,pyConText.ConTextMarkup)
         pseudo_conditions = fc.markup_conditions(markup=pseudo_markup)
         self.assertTrue(pseudo_conditions.pseudoanatomy)
-    def test_indication_with_pseudo_anatomy_is_none(self): #this pseudo rule is not working
+    def test_indication_with_pseudo_anatomy_is_none(self):
         pseudo_sentence = "Evaluate for sternal fluid collection."
         pseudo_markup = fc.markup_sentence(pseudo_sentence)
-        #pseudo_conditions = fc.markup_conditions(markup=pseudo_markup)
         self.assertIsNone(pseudo_markup.markupClass)
         
     def test_markup_has_target(self):
@@ -211,17 +198,11 @@ class firstPipelineTest(unittest.TestCase):
  
 class secondPipelineTest(unittest.TestCase):
     def setUp(self):
-        DATADIR = '/Users/alec/Desktop/fcfinder_apr21'
-        file = os.path.join(DATADIR, 'corpus','No_10792_131562_05-29-20.txt')
+        file = 'No_10792_131562_05-29-20.txt'
         with open(file,'r') as f:
             report = f.read()
         pipeline = fc.fc_pipeline
-        self.markups = pipeline(report)
+        self.markups = pipeline(report,spans=False)
     def test_negated_count_is_two(self):
         negated_mentions = [x for x in self.markups if x.markupClass == 'Fluid collection-negated']
         self.assertEqual(2, len(negated_mentions))
-   #def test_
-#        for _ in self.classifier.__dict__.keys():
-#            self.assertIsNone(_)
-        
-    

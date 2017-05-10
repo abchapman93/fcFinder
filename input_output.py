@@ -54,14 +54,27 @@ def read_sqlite(db, view=None,query=None):
     texts = [x[0] for x in cursor.fetchall()]
     return texts
 
-def fc_vectorizer(annotations,classes):
-    """Takes a list of annotations from fcFinder and arbitrary arguments representing the classes.
+def markups_vectorizer(markups,classes=["Fluid collection-positive",
+                                        'fluid collection-indication','Fluid collection-negated']):
+    """Takes a list of markups from fcFinder and a list containing the classes.
+    Outputs a vector of annotation counts for each class argument."""
+    arr = np.ravel(np.zeros((len(classes),1)))
+    for i in range(len(classes)):
+        for a in markups:
+            if a.markupClass == classes[i]:
+                arr[i] += 1
+    return arr
+
+
+
+def fc_vectorizer(annotations,classes): #for use with annotation objects. Use markups_vectorizer instead
+    """Takes a list of annotations from fcFinder and a list containing the classes.
     Outputs a vector of annotation counts for each class argument."""
     arr = np.zeros((len(classes),1))
     arr = np.ravel(arr)
     for i in range(len(classes)):
         for a in annotations:
-            if a == classes[i]:
+            if a.getMentionClass() == classes[i]:
                 arr[i] += 1
     return arr
 

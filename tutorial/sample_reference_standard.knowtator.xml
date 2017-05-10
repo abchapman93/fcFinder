@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="Yes_74976_148937_02-28-66.txt">
+    <annotation>
+        <mention id="EHOST_Instance_67907" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="45" end="102" />
+        <spannedText>Evaluate for abscess/fluid collection and drain position.</spannedText>
+        <creationDate>Tue Feb 28 10:54:30 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67907">
+        <mentionClass id="fluid collection-indication">Evaluate for abscess/fluid collection and drain position.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67908" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="333" end="390" />
+        <spannedText>Evaluate for abscess/fluid collection and drain position.</spannedText>
+        <creationDate>Tue Feb 28 10:54:37 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67908">
+        <mentionClass id="fluid collection-indication">Evaluate for abscess/fluid collection and drain position.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67909" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="453" end="564" />
+        <spannedText>Multiloculated communicating fluid collections in GB fossa (w/ Surgicel), perihepatic space, and R abd/pelvis</spannedText>
+        <creationDate>Tue Feb 28 10:54:43 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67909">
+        <mentionClass id="Fluid collection-positive">Multiloculated communicating fluid collections in GB fossa (w/ Surgicel), perihepatic space, and R abd/pelvis</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67910" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="641" end="714" />
+        <spannedText>R rectus abdominis edema and small IM fluid collections, cannot r/o infx.</spannedText>
+        <creationDate>Tue Feb 28 10:55:12 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67910">
+        <mentionClass id="Fluid collection-positive">R rectus abdominis edema and small IM fluid collections, cannot r/o infx.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67911" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="904" end="1035" />
+        <spannedText>Multiloculated fluid collections in GB fossa, perihepatic space, and R abd/pelvis, with characteristics concerning for superinfx.</spannedText>
+        <creationDate>Tue Feb 28 10:55:27 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67911">
+        <mentionClass id="Fluid collection-positive">Multiloculated fluid collections in GB fossa, perihepatic space, and R abd/pelvis, with characteristics concerning for superinfx.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67912" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="1038" end="1111" />
+        <spannedText>R rectus abdominis edema and small IM fluid collections, cannot r/o infx.</spannedText>
+        <creationDate>Tue Feb 28 10:55:49 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67912">
+        <mentionClass id="Fluid collection-positive">R rectus abdominis edema and small IM fluid collections, cannot r/o infx.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67913" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="1243" end="1372" />
+        <spannedText>82-year-old male with acute on chronic cholecystitis, complicated by gallbladder perforation with biloma and subhepatic abscess.</spannedText>
+        <creationDate>Tue Feb 28 10:56:07 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67913">
+        <mentionClass id="fluid collection-indication">82-year-old male with acute on chronic cholecystitis, complicated by gallbladder perforation with biloma and subhepatic abscess.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67914" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="1374" end="1450" />
+        <spannedText>Underwent open cholecystectomy, abscess drainage, and drain placement on .</spannedText>
+        <creationDate>Tue Feb 28 10:56:11 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67914">
+        <mentionClass id="fluid collection-indication">Underwent open cholecystectomy, abscess drainage, and drain placement on .</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67915" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="2257" end="2514" />
+        <spannedText>In the gallbladder fossa, there is a relatively well-circumscribed, intermediate-density fluid collection measuring -4 cm AP x -3 cm TV x -0 SI, with internal air-fluid level and foci of low attenuation consistent with porous Surgicel packing material.</spannedText>
+        <creationDate>Tue Feb 28 10:56:29 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67915">
+        <mentionClass id="Fluid collection-positive">In the gallbladder fossa, there is a relatively well-circumscribed, intermediate-density fluid collection measuring -4 cm AP x -3 cm TV x -0 SI, with internal air-fluid level and foci of low attenuation consistent with porous Surgicel packing material.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67916" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="2516" end="2670" />
+        <spannedText>This appears to demonstrate faint peripheral rim enhancement, and is peripheral to several additional perihepatic and intraperitoneal fluid collections.</spannedText>
+        <creationDate>Tue Feb 28 10:56:42 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67916">
+        <mentionClass id="Fluid collection-positive">This appears to demonstrate faint peripheral rim enhancement, and is peripheral to several additional perihepatic and intraperitoneal fluid collections.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67917" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="2672" end="2831" />
+        <spannedText>The subcapsular fluid collection surrounding the right lobe of the liver is decreased in size and now measures up to 3 cm in maximum depth, previously -5 cm.</spannedText>
+        <creationDate>Tue Feb 28 10:57:00 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67917">
+        <mentionClass id="Fluid collection-positive">The subcapsular fluid collection surrounding the right lobe of the liver is decreased in size and now measures up to 3 cm in maximum depth, previously -5 cm.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67918" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="3010" end="3185" />
+        <spannedText>This collection and a contiguous posterior collection along the left paracolic gutter demonstrate well-circumscribed borders with rim hyperdensity suggestive of enhancement.</spannedText>
+        <creationDate>Tue Feb 28 10:57:33 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67918">
+        <mentionClass id="Fluid collection-positive">This collection and a contiguous posterior collection along the left paracolic gutter demonstrate well-circumscribed borders with rim hyperdensity suggestive of enhancement.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67919" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="3297" end="3468" />
+        <spannedText>More inferiorly, a loculated 5 cm TV x -8 cm AP x -7 cm SI collection is present in the right pelvis, separate from the catheter tract, without definite rim enhancement.</spannedText>
+        <creationDate>Tue Feb 28 10:57:46 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67919">
+        <mentionClass id="Fluid collection-positive">More inferiorly, a loculated 5 cm TV x -8 cm AP x -7 cm SI collection is present in the right pelvis, separate from the catheter tract, without definite rim enhancement.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67920" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="3710" end="3830" />
+        <spannedText>A focal intramuscular fluid collection in the right rectus abdominis measures -7 x -8 cm, with internal locules of gas.</spannedText>
+        <creationDate>Tue Feb 28 10:58:02 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67920">
+        <mentionClass id="Fluid collection-positive">A focal intramuscular fluid collection in the right rectus abdominis measures -7 x -8 cm, with internal locules of gas.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67921" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="3997" end="4240" />
+        <spannedText>The lateral drain courses along the right lateral abdominal wall, along the posterior margin of the dominant right abdominal fluid collection, and terminates at the inferior tip of the liver, at the periphery of the larger fluid collection.</spannedText>
+        <creationDate>Tue Feb 28 10:58:25 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67921">
+        <mentionClass id="Fluid collection-positive">The lateral drain courses along the right lateral abdominal wall, along the posterior margin of the dominant right abdominal fluid collection, and terminates at the inferior tip of the liver, at the periphery of the larger fluid collection.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67922" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="4242" end="4443" />
+        <spannedText>The medial drain courses anteriorly and superiorly through the center of the abdominal collection, then curves medially through the subcapsular hepatic fluid collection, with tip at the hepatic dome.</spannedText>
+        <creationDate>Tue Feb 28 10:58:45 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67922">
+        <mentionClass id="Fluid collection-positive">The medial drain courses anteriorly and superiorly through the center of the abdominal collection, then curves medially through the subcapsular hepatic fluid collection, with tip at the hepatic dome.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67923" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="5286" end="5460" />
+        <spannedText>The appendix is completely filled with enteric contrast and measures 6 mm, with mild reactive wall thickening of the posterior wall adjacent to the pelvic fluid collection.</spannedText>
+        <creationDate>Tue Feb 28 10:59:27 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67923">
+        <mentionClass id="Fluid collection-positive">The appendix is completely filled with enteric contrast and measures 6 mm, with mild reactive wall thickening of the posterior wall adjacent to the pelvic fluid collection.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67924" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="5462" end="5592" />
+        <spannedText>Mild reactive thickening is also noted at the lateral margin of the ascending colon, adjacent to the abdominal fluid collection.</spannedText>
+        <creationDate>Tue Feb 28 10:59:42 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67924">
+        <mentionClass id="Fluid collection-positive">Mild reactive thickening is also noted at the lateral margin of the ascending colon, adjacent to the abdominal fluid collection.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67925" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="6551" end="6764" />
+        <spannedText>Interval open cholecystectomy with multiloculated gallbladder fossa, perihepatic, and right abdominopelvic fluid collections, some of which demonstrate characteristics concerning for infection and/or hemorrhage.</spannedText>
+        <creationDate>Tue Feb 28 11:00:08 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67925">
+        <mentionClass id="Fluid collection-positive">Interval open cholecystectomy with multiloculated gallbladder fossa, perihepatic, and right abdominopelvic fluid collections, some of which demonstrate characteristics concerning for infection and/or hemorrhage.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67926" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="6768" end="6941" />
+        <spannedText>drains are located peripherally within some loculations of the perihepatic collections, but the subhepatic collection does not appear to be drained by the surgical drains.</spannedText>
+        <creationDate>Tue Feb 28 11:00:41 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67926">
+        <mentionClass id="Fluid collection-positive">drains are located peripherally within some loculations of the perihepatic collections, but the subhepatic collection does not appear to be drained by the surgical drains.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67927" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="6945" end="7061" />
+        <spannedText>Small right rectus abdominis collection along the surgical incision, gas containing, cannot exclude superinfection.</spannedText>
+        <creationDate>Tue Feb 28 11:00:57 EST 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67927">
+        <mentionClass id="Fluid collection-positive">Small right rectus abdominis collection along the surgical incision, gas containing, cannot exclude superinfection.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67928" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="3" end="5" />
+        <spannedText>CT</spannedText>
+        <creationDate>Tue Feb 28 11:01:08 EST 2017</creationDate>
+    </annotation>
+    <stringSlotMention id="EHOST_Instance_67959">
+        <mentionSlot id="existence" />
+        <stringSlotMentionValue value="present" />
+    </stringSlotMention>
+    <classMention id="EHOST_Instance_67928">
+        <hasSlotMention id="EHOST_Instance_67959" />
+        <mentionClass id="Fluid collection-status">CT</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67940" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="715" end="836" />
+        <spannedText>malpositioned drains, which course through collections, but tips end outside at hepatic dome and inferior liver tip.</spannedText>
+        <creationDate>Sat Mar 4 12:47:54 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67940">
+        <mentionClass id="Fluid collection-positive">malpositioned drains, which course through collections, but tips end outside at hepatic dome and inferior liver tip.</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_67945" />
+        <annotator id="eHOST_2010">REFERENCE</annotator>
+        <span start="4444" end="4554" />
+        <spannedText>the liver parenchyma appears slightly heterogeneous, likely due to hyperemia about the adjacent collections.</spannedText>
+        <creationDate>Sat Mar 4 12:47:54 2017</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_67945">
+        <mentionClass id="Fluid collection-positive">the liver parenchyma appears slightly heterogeneous, likely due to hyperemia about the adjacent collections.</mentionClass>
+    </classMention>
+</annotations>
+

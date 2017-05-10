@@ -1,0 +1,53 @@
+ 
+ CT ABDOMEN W/CONTRAST; CT PELVIS W/CONTRAST 
+ ~ Reason: assess for undrained collections w/PO and IV contrast
+ ~ Admitting Diagnosis: BILE DUCT INJURY
+  Contrast: OPTIRAY Amt: 130
+ 
+
+ ~ UNDERLYING MEDICAL CONDITION:
+  83 year old man with hepaticojejunostomy , now w/some bilious output in JP
+  drain
+ ~ REASON FOR THIS EXAMINATION:
+  assess for undrained collections w/PO and IV contrast
+ No contraindications for IV contrast
+ 
+
+ ~ FINAL REPORT
+ HISTORY:  83-year-old man status post hepaticojejunostomy, , with
+ increased bilious output in the JP drain.  Evaluate for fluid collections.
+ Comparison is made to a prior CT examination dated .
+ ~ TECHNIQUE:  MDCT-acquired axial images were obtained through the abdomen and
+ pelvis with oral and intravenous contrast.  Coronal and sagittal reformations
+ were evaluated.
+ ~ CT OF THE ABDOMEN WITH INTRAVENOUS CONTRAST:  Limited examination of the lung
+ bases displays persistent small bilateral pleural effusions (right greater
+ than left) with adjacent compression atelectasis.  Patient is noted to be
+ status post hepaticojejunostomy with a JP drain and a biliary drain exiting
+ externally along the right anterior abdominal wall.  No abnormal fluid
+ collections are identified.  The intra-abdominal bowel appears grossly
+ unremarkable.  Mild inflammatory changes in the fat surrounding the surgical
+ site are identified, expected postoperatively, as is multiple small pockets of
+ free air within the abdominal cavity.  The liver, spleen, pancreas, adrenal
+ glands, and right kidney appear grossly normal.  There is unchanged appearance
+ to simple cysts within the left kidney.  No evidence of renal calculi or
+ hydronephrosis.  No pathologically enlarged lymph nodes are identified.  Mild
+ calcification is noted within the coronary vascular tree and intra-abdominal
+ aorta.
+ ~ CT OF THE PELVIS WITH INTRAVENOUS CONTRAST:  There is extensive colonic
+ diverticulosis without evidence of acute diverticulitis as well as small
+ bilateral fat-containing inguinal hernias.  Decompressed air and Foley
+ containing urinary bladder appears unremarkable.  No free fluid is noted
+ within the pelvic cavity and no pathologically enlarged lymph nodes are
+ identified.
+ BONE WINDOWS:  No malignant-appearing osseous lesions are identified.  There
+ are extensive degenerative changes with multiple bridging anterior osteophyte
+ formation in the thoracolumbar spine.
+ ~ IMPRESSION:
+ -  No abnormal intra-abdominal fluid collections identified.  Expected
+ postoperative inflammatory stranding of the fat and small pockets of intra-
+ abdominal free air.
+ 
+ -  Small bilateral pleural effusions with compression atelectasis.
+ -  Extensive colonic diverticulosis without evidence of acute diverticulitis.
+ -  Bilateral fat containing inguinal hernias.

@@ -1,0 +1,3 @@
+Lex	Type	Regex	Direction				Codes
+can be ruled out	DEFINITE_NEGATED_EXISTENCE		backward				
+cannot see	DEFINITE_NEGATED_EXISTENCE		forward				

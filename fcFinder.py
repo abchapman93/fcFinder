@@ -1,101 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Wed Mar  8 11:04:31 2017
-
-@author: alec
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 25 11:02:49 2017
-
-@author: alec
+@author: Alec Chapman
+Last Updated: 5-10-17
 """
 
 import pyConTextNLP.pyConTextGraph as pyConText
-from pyConTextNLP.pyConTextGraph import ConTextMarkup
 import pyConTextNLP.itemData as itemData
-import os
-import helpers
-#from rules import markup_conditions, markup_classifier
 
-import re
-import copy
-import networkx as nx
-import platform
-import copy
-import uuid
-import datetime
-import time
-
-from xml.etree.cElementTree import Element, SubElement, Comment, tostring
-from xml.etree import ElementTree
-from xml.dom import minidom
-from collections import namedtuple
-
-DATADIR = os.path.join(os.path.expanduser('~'),'Box Sync','Bucher_Surgical_MIMICIII','pyConText_implement','fcFinder')
-modifiers = itemData.instantiateFromCSVtoitemData(\
-"/Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/modifiers.tsv")
-targets = itemData.instantiateFromCSVtoitemData(\
-    "file:///Users/alec/Box Sync/Bucher_Surgical_MIMICIII/pyConText_implement/fcFinder/targets.tsv")
-
-def markup_sentence(s,span=None,modifiers=modifiers, targets=targets, prune_inactive=True):
-    """s is a sentence from a list of a split report.
-    span is the tuple of the span of the sentence. Optional.
-    Returns a named tuple where markup=markup, span=span
-    NOTE: this is different than in the original pyConText library,
-    where this function just returns a markup object.
-    This is to allow the user to keep track of the original span from the document.
-    """
-    #MarkupSpanPair = namedtuple('MarkupSpanPair',['markup','span'])
-    markup = pyConText.ConTextMarkup()
-    markup.setRawText(s)
-    if not span:
-        span = (0,len(s))
-    markup.docSpan = span
-    
-    markup.cleanText() #add your own cleanText function in helpers
-    markup.markItems(modifiers, mode="modifier")
-    markup.markItems(targets, mode="target")
-    markup.pruneMarks()
-    markup.dropMarks('Exclusion')
-    markup.applyModifiers()
-    markup.pruneSelfModifyingRelationships()
-    if prune_inactive:
-        markup.dropInactiveModifiers()
-        
-    markup.conditions = markup_conditions(markup)
-    markup.target = markup.conditions.target
-    markup.modifiers = markup.conditions.modifiers #markup_classifier(markup)
-    markup.markupClass = markup_classifier(markup.conditions)
-    
-    return markup
-    #return MarkupSpanPair(markup=markup,span=span)
-
-def create_list_of_markups(sentences,spans=False):
-    """Takes a list of sentences and returns a list of markups.
-    If you are passing in document spans for each sentence, set spans = True and
-    pass sentences as a list oftwo-tuples with the sentence in index 0. 
-    Example:
-        [ ..., ('There is a fluid collection near the abdomen.', (56, 72)), 
-           (No rim enhancement can be seen.', (73, 86)),... ] 
-    """
-
-    if spans:
-        markups = [markup_sentence(s=x[0],span=x[1]) for x in sentences]
-    else:
-        markups = [markup_sentence(x) for x in sentences]
-    return markups
-
-def create_context_doc(list_of_markups,modifiers=modifiers,targets=targets):
-    """Creates a ConText document out of a list of markups."""
-    context_doc = pyConText.ConTextDocument()
-    for m in list_of_markups:
-        context_doc.addMarkup(m)
-    return context_doc
-    
+modifiers = itemData.instantiateFromCSVtoitemData(
+        'https://raw.githubusercontent.com/abchapman93/fcFinder/master/modifiers.tsv')
+targets = itemData.instantiateFromCSVtoitemData(
+'https://raw.githubusercontent.com/abchapman93/fcFinder/master/targets.tsv')
 
 class markup_conditions(object):
     """This class creates the conditions of interest for a markup.
@@ -147,17 +61,29 @@ class markup_conditions(object):
         if self.markup.isModifiedByCategory(self.target,'pseudoanatomy'):
             self.pseudoanatomy = True
             
-def markup_classifier(conditions):
-    """Takes a markup conditions object and classifies according to logic defined below.
-    Should be customized for implementation.
-    Note the lower capitalization of fluid collection-indication; this is only to match
-    the annotations made in the gold standard for this project."""
-    #conditions = markup_conditions(markup)
+    def add_target(self,new_target):
+        """Appends a new target as a list to target_values"""
+        self.target_values.append([new_target])
+        self.set_target_and_modifiers()
+            
+    def __repr__(self): #view the category of the target and all modifiers
+        modifier_categories = ['anatomy','definitive','negated','indication','pseudoanatomy']
+        try:
+            return '{target} modified by: {modifiers}'.format(target=self.target.getCategory(),
+                    modifiers=[x for x in modifier_categories
+                               if self.__dict__[x]])
+        except AttributeError:
+            return "Empty Conditions"
     
+def markup_classifier(m):
+    """Takes a markup conditions object and classifies according to logic defined below.
+    Should be customized for implementation."""
+    
+    conditions = m.conditions
     markup_class = None
-    #markup.target = conditions.target #apr23 added this
     if not conditions.target:
         pass
+    
     #positive
     elif (conditions.anatomy and not conditions.negated and not conditions.indication)\
         or (conditions.anatomy and conditions.definitive):
@@ -165,7 +91,7 @@ def markup_classifier(conditions):
         
     #negated
     elif conditions.negated and not conditions.definitive:
-        markup_class = "Fluid collection-negated"
+        markup_class = "Fluid collection-negated" #work on making this more generalizable
     
     #indication
     elif conditions.indication and not (conditions.negated or conditions.definitive
@@ -177,17 +103,84 @@ def markup_classifier(conditions):
         markup_class = None
     return markup_class
 
+def conditions_decorator(func,markup_conditions=markup_conditions,
+                         markup_classifier=markup_classifier):
+    """Decorates a create_markup function to add conditions using a markup_conditions object"""
+    def wrapper_function(*args,**kwargs):
+        markup = func(*args,**kwargs)
+        markup.conditions = markup_conditions(markup) #check conditions of interest
+        markup.target = markup.conditions.target #save the target for this markup
+        markup.modifiers = markup.conditions.modifiers #save the modifiers for this markup
+        markup.markupClass = markup_classifier(markup) #classify markup according to target and modifiers,
+                                                                   #save class
+        return markup
+    return wrapper_function
+
+#@conditions_decorator
+def create_markup(s,span=None,modifiers=modifiers, targets=targets, prune_inactive=True):
+    """Creates a markup object from a sentence.
+    s is a sentence from a list of a split report.
+    span is the tuple of the span of the sentence. Optional.
+    Returns a named tuple where markup=markup, span=span
+    """
+    markup = pyConText.ConTextMarkup()
+    markup.setRawText(s)
+    if not span: #Creates a default docSpan if you're just splitting a list
+        span = (0,len(s))
+    markup.docSpan = span
+    markup.cleanText()
+    markup.markItems(modifiers, mode="modifier")
+    markup.markItems(targets, mode="target")
+    markup.pruneMarks()
+    markup.dropMarks('Exclusion')
+    markup.applyModifiers()
+    markup.pruneSelfModifyingRelationships()
+    if prune_inactive:
+        markup.dropInactiveModifiers()
+        
+#    markup.conditions = markup_conditions(markup) #check conditions of interest
+#    markup.target = markup.conditions.target #save the target for this markup
+#    markup.modifiers = markup.conditions.modifiers #save the modifiers for this markup
+#    markup.markupClass = markup_classifier(markup.conditions) #classify markup according to target and modifiers,
+#                                                                #save class
+    
+    return markup
+
+markup_sentence = conditions_decorator(create_markup)
+
+
+def create_list_of_markups(sentences,spans=False,modifiers=modifiers,targets=targets):
+    """Takes a list of sentences and returns a list of markups.
+    If you are passing in document spans for each sentence, set spans = True and
+    pass sentences as a list of two-tuples with the sentence in index 0. 
+    Example:
+        [ ..., ('There is a fluid collection near the abdomen.', (56, 72)), 
+           (No rim enhancement can be seen.', (73, 86)),... ] 
+    """
+
+    if spans:
+        markups = [markup_sentence(s=x[0],span=x[1],modifiers=modifiers,targets=targets)
+                    for x in sentences]
+    else:
+        markups = [markup_sentence(x,modifiers=modifiers,targets=targets)
+        for x in sentences] #adds a default span of (0, len(x)))
+    return markups
+
+def create_context_doc(list_of_markups,modifiers=modifiers,targets=targets):
+    """Creates a ConText document out of a list of markups."""
+    context_doc = pyConText.ConTextDocument()
+    for m in list_of_markups:
+        context_doc.addMarkup(m)
+    return context_doc
 
 
 def fc_pipeline(report, preprocess=lambda x:x.lower(), 
-                splitter=helpers.my_sentence_splitter):
+                splitter=lambda x:x.split('.'),spans=False,
+                modifiers=modifiers,targets=targets):
     report = preprocess(report)
     sentences = splitter(report)
-    markups = create_list_of_markups(sentences,spans=True)
+    markups = create_list_of_markups(sentences,spans=spans,modifiers=modifiers,targets=targets)
     markups = [m for m in markups if m.markupClass]
-    #classified_markups = 
-    #document = create_context_doc(markups)
-    #markups = 
     return markups
 
 

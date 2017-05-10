@@ -1,0 +1,4 @@
+Lex	Type		Regex		Direction	Codes
+pneumonia	PNEUMONIA					
+fluid collection	FLUID_COLLECTION	(collect[ions]* of fluids*)|(fluid collect[ions]*)				
+urinary tract infection	UTI					
