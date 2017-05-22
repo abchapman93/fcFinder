@@ -15,6 +15,8 @@ from xml.etree.cElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree
 from xml.dom import minidom
 
+"""This module contains functions used to classify documents based on fcFinder ouput
+and to create eHOST XML files with document-level annotations."""
 #create document-level annotation
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -40,14 +42,14 @@ def create_document_annotation(doc_class,src):
     spannedText.text = 'first word'
     creationDate = SubElement(annotation_body,"creationDate")
     creationDate.text = time.strftime("%c")
-    
+
     stringSlotMention = SubElement(root,'stringSlotMention')
     stringSlotMention.set('id',str(mentionid+1))
     mentionSlot = SubElement(stringSlotMention,'mentionSlot')
     mentionSlot.set('id','existence')
     stringSlotValue = SubElement(stringSlotMention,'stringSlotMentionValue')
     stringSlotValue.set('value',doc_class)
-    
+
     classMention = SubElement(root,'classMention')
     classMention.set('id',str(mentionid))
     hasSlotMention = SubElement(classMention,'hasSlotMention')
@@ -55,7 +57,7 @@ def create_document_annotation(doc_class,src):
     mentionClass = SubElement(classMention,'mentionClass')
     mentionClass.set('id','Fluid collection-status')
     mentionClass.text = 'first word'
-    
+
     adjudication_status = SubElement(root,'eHOST_Adjudication_Status')
     adjudication_status.set('version','1.0')
     selected_annotators = SubElement(adjudication_status,'Adjudication_Selected_Annotators')
@@ -63,7 +65,7 @@ def create_document_annotation(doc_class,src):
     selected_classes = SubElement(adjudication_status,'Adjudication_Selected_Classes')
     selected_classes.set('version','1.0')
     adjudication_others = SubElement(adjudication_status,'Adjudication_Others')
-    
+
     check_spans = SubElement(adjudication_others,'CHECK_OVERLAPPED_SPANS')
     check_spans.text = 'false'
     check_attributes = SubElement(adjudication_others,'CHECK_ATTRIBUTES')
@@ -74,7 +76,7 @@ def create_document_annotation(doc_class,src):
     check_class.text = 'false'
     check_comment = SubElement(adjudication_others,'CHECK_COMMENT')
     check_comment.text = 'false'
-    
+
     XMLstring = prettify(root)
     return XMLstring
 
@@ -102,7 +104,7 @@ def docClassifier(src, dst):
     with open(os.path.join(dst,fname),'w') as f0:
         f0.write(XMLstring)
     return
-    
+
 def classify_batch(saved_dir, outdir):
     files = glob.glob(os.path.join(saved_dir,'*.xml'))
     counter = 0
@@ -135,6 +137,3 @@ def annotations2Binary(src,dest):
     with open(dest,'w') as f1:
         f1.write(new_xml)
     return
-
-    
-    

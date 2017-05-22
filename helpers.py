@@ -6,13 +6,12 @@ Created on Mon Feb  6 10:16:35 2017
 @author: alec
 """
 
-#test how to retain the span
-
 import re
 import os
 import glob
 from collections import OrderedDict, namedtuple
 
+"""This module defines functions for preprocessing texts and splitting sentences."""
 
 def preprocess(report):
     """Preprocesses a report for annotation
@@ -119,8 +118,8 @@ def my_sentence_splitter(text,termination_points='.!~?'):
     current_sentence = ''
     current_character = text[end_span]
     sentences = []
-    
-    
+
+
     while end_span < len(text):
         if current_character in termination_points:
             end_span += 1 #one for the current character, one for a whitespace
@@ -142,7 +141,7 @@ def my_sentence_splitter(text,termination_points='.!~?'):
             except IndexError:
                 pass
     return sentences
-    
+
 def my_old_sentence_splitter(text):
     """Concatenates a text character by character. Sentences end at a termination point
         Returns an OrderedDictionary: Keys are the sentence strings, values are their span in the document
@@ -190,4 +189,3 @@ def my_old_sentence_splitter(text):
             except IndexError:
                 pass
     return spans
-    

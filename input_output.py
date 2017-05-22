@@ -19,12 +19,8 @@ from xml.etree.ElementTree import Element, SubElement
 from xml.dom import minidom
 import fcFinder as fc
 
+"""This module contains functions that assist in inputting and outputting data with fcFinder."""
 
-def read_file(inpath):
-    with open(inpath,'r') as f:
-        text = f.read()
-    return text
-    
 def read_batch_of_files(DIR):
     """Reads in an entire batch of text files as a list of strings"""
     files = glob.glob(os.path.join(DIR,'*.txt'))
@@ -33,9 +29,9 @@ def read_batch_of_files(DIR):
         with open(f,'r') as f:
             texts.append(f.read())
     return texts
-    
+
 def read_sqlite(db, view=None,query=None):
-    """Allows the user to select notes from a sqlite database using either 
+    """Allows the user to select notes from a sqlite database using either
     prewritten views or a custom query.
     Parameters:
         conn - database connection
@@ -79,7 +75,7 @@ def fc_vectorizer(annotations,classes): #for use with annotation objects. Use ma
     return arr
 
 #need to get the target tag object from the markup
-    
+
 def createAnnotation(markup,file_name): #eventually mention_class will be defined by the logic
     """Takes a ConTextMarkup object and returns a single annotation object.
     This will have to be modified for classes other than definiiveEvidence
@@ -89,7 +85,7 @@ def createAnnotation(markup,file_name): #eventually mention_class will be define
     annotation = mentionAnnotation(markup,textSource=file_name,mentionClass=markup.markupClass,
                                     mentionid=markup.target.getTagID(), spannedText=markup.getText(),
                                     span=markup.docSpan)
-   
+
 #eHOST KNOWTATOR XML
 #def createAnnotation(markup,tO,file_name): #eventually mention_class will be defined by the logic
 #    """Takes a ConTextMarkup object and returns a single annotation object.
@@ -101,7 +97,7 @@ def createAnnotation(markup,file_name): #eventually mention_class will be define
 #                                    mentionid=tO.getTagID(), spannedText=markup.getText(),
 #                                    span=markup.getDocSpan())
     return annotation
-    
+
 class mentionAnnotation(object):
     def __init__(self,markup,target=None,textSource=None,mentionClass=None,mentionid=None,annotatorid='FC_FINDER',span=None,
                  spannedText=None,creationDate=None,XML=None,MentionXML=None):
@@ -120,7 +116,7 @@ class mentionAnnotation(object):
         self.setCreationDate()
         self.setXML()
         self.setMentionXML()
-        
+
     def setTarget(self):
         self.target = self.markup.target
     def setText(self,text):
@@ -202,7 +198,7 @@ def write_knowtator(annotations,text_source): #test_source should be read automa
     Takes a list of mentionAnnotation objects, a source file name, and an outpath.
     2/3/17: returns a single ElementTree Element object.
     Need to be able to turn this into a string."""
-    
+
     root = Element('annotations')
     root.set('textSource',text_source)
     for annotation in annotations:
@@ -211,8 +207,8 @@ def write_knowtator(annotations,text_source): #test_source should be read automa
             root.append(annotation.getMentionXML())   ####Bring this back later!!!
         except AttributeError:
             pass
-    
-        
+
+
     adjudication_status = SubElement(root,'eHOST_Adjudication_Status')
     adjudication_status.set('version','1.0')
     selected_annotators = SubElement(adjudication_status,'Adjudication_Selected_Annotators')
@@ -220,7 +216,7 @@ def write_knowtator(annotations,text_source): #test_source should be read automa
     selected_classes = SubElement(adjudication_status,'Adjudication_Selected_Classes')
     selected_classes.set('version','1.0')
     adjudication_others = SubElement(adjudication_status,'Adjudication_Others')
-    
+
     check_spans = SubElement(adjudication_others,'CHECK_OVERLAPPED_SPANS')
     check_spans.text = 'false'
     check_attributes = SubElement(adjudication_others,'CHECK_ATTRIBUTES')
@@ -231,10 +227,10 @@ def write_knowtator(annotations,text_source): #test_source should be read automa
     check_class.text = 'false'
     check_comment = SubElement(adjudication_others,'CHECK_COMMENT')
     check_comment.text = 'false'
-    
+
     XMLstring = prettify(root)
     return XMLstring
-    
+
 def getXML(annotation): #text source should be at the document level
         return annotationXMLSkel.format(annotation.getTextSource(),annotation.getMentionID(),
                 annotation.getAnnotatorID(),annotation.getSpan()[0],annotation.getSpan()[1],

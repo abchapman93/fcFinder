@@ -6,11 +6,14 @@ Last Updated: 5-10-17
 import pyConTextNLP.pyConTextGraph as pyConText
 import pyConTextNLP.itemData as itemData
 
-modifiers = itemData.instantiateFromCSVtoitemData(
-        'https://raw.githubusercontent.com/abchapman93/fcFinder/master/modifiers.tsv')
-targets = itemData.instantiateFromCSVtoitemData(
-'https://raw.githubusercontent.com/abchapman93/fcFinder/master/targets.tsv')
-
+try:
+    modifiers = itemData.instantiateFromCSVtoitemData(
+            'https://raw.githubusercontent.com/abchapman93/fcFinder/master/modifiers.tsv')
+    targets = itemData.instantiateFromCSVtoitemData(
+    'https://raw.githubusercontent.com/abchapman93/fcFinder/master/targets.tsv')
+except:
+    modifiers = None
+    targets = None
 class markup_conditions(object):
     """This class creates the conditions of interest for a markup.
     A rule-based classifier can then assign a class to a markup based on rules
@@ -62,8 +65,8 @@ class markup_conditions(object):
             self.pseudoanatomy = True
             
     def add_target(self,new_target):
-        """Appends a new target as a list to target_values"""
-        self.target_values.append([new_target])
+        """Appends a new target  to target_values"""
+        self.target_values.append(new_target)
         self.set_target_and_modifiers()
             
     def __repr__(self): #view the category of the target and all modifiers
@@ -116,7 +119,6 @@ def conditions_decorator(func,markup_conditions=markup_conditions,
         return markup
     return wrapper_function
 
-#@conditions_decorator
 def create_markup(s,span=None,modifiers=modifiers, targets=targets, prune_inactive=True):
     """Creates a markup object from a sentence.
     s is a sentence from a list of a split report.
@@ -138,12 +140,6 @@ def create_markup(s,span=None,modifiers=modifiers, targets=targets, prune_inacti
     if prune_inactive:
         markup.dropInactiveModifiers()
         
-#    markup.conditions = markup_conditions(markup) #check conditions of interest
-#    markup.target = markup.conditions.target #save the target for this markup
-#    markup.modifiers = markup.conditions.modifiers #save the modifiers for this markup
-#    markup.markupClass = markup_classifier(markup.conditions) #classify markup according to target and modifiers,
-#                                                                #save class
-    
     return markup
 
 markup_sentence = conditions_decorator(create_markup)
