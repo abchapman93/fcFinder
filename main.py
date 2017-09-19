@@ -80,9 +80,16 @@ def evaluate_report(markups, annotations):
     for m in markups:
         overlapping_annotations = find_overlapping_annotations(m, annotations)
         print(overlapping_annotations)
-        exit()
-    exit()
-    
+        print(m)    
+        markup_classes = []
+        for t in m.getMarkedTargets():
+            markup_class = classify_markup(m, t)
+            if markup_class:
+                 markup_classes.append(markup_class)
+        print("Markup classes:")
+        print(markup_classes)
+   
+ 
 def find_overlapping_annotations(m, annotations):
 
     def overlaps(m_span, a_span):
@@ -104,11 +111,40 @@ def find_overlapping_annotations(m, annotations):
                 overlapping_idx.append(i)
         except:
             continue
-    overlapping_annotations = annotations.iloc[overlapping_idx]
+    try:
+        overlapping_annotations = annotations.iloc[overlapping_idx]
+        print("Success")
+    except:
+        overlapping_annotations = None
     return overlapping_annotations
-   
-    
 
+
+def classify_markup(m, target):
+    """This function will be unique to each project"""
+    
+    fluid_collection = False
+    anatomy = False
+    negated = False
+    indication = False
+
+    if target.getCategory() == ['fluid_collection']:
+        fluid_collection = True
+    if m.isModifiedByCategory(target, 'anatomy'):
+        anatomy = True
+    if m.isModifiedByCategory(target, 'definite_negated_existence'):
+        negated = True
+
+
+    if fluid_collection and negated:
+        markup_class = 'Fluid collection-negated'
+    elif fluid_collection and indication:
+        markup_class = 'fluid collection-indication'
+    elif fluid_collection and anatomy:
+        markup_class = 'Fluid collection-positive'
+    else:
+        markup_class = None
+    return markup_class
+    
 
 def main():
     modifiers = itemData.instantiateFromCSVtoitemData(MODIFIERS_FILE)
