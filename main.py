@@ -1,4 +1,5 @@
 import os, sys
+import re
 import pandas as pd
 
 import pyConTextNLP.pyConTextGraph as pyConText
@@ -11,12 +12,26 @@ REPORTS_FILE = '/Users/alec/bucher/data/MIMIC_RAD/radiology_reports.sqlite'
 REFERENCE_STANDARD = '/Users/alec/Box Sync/Radiology Annotation/Reference Standard/Training/saved/Annotations.xlsx'
 
 
+def update_reference_df(df):
+    span_strings = list(df.Span)
+    span_strings = [re.sub('[^0-9,]', '', span) for span in span_strings]
+    spans = []
+    for span in span_strings:
+        try:
+            start, end = span.split(',')
+            spans.append((int(start), int(end)))
+        except:
+            spans.append((0, 0))
+    df['Span'] = spans
+    return df
+
 def extract_markups_from_text(text, targets, modifiers):
     split_report = helpers.my_sentence_splitter(text)
     markups = [create_markup(s=text, span=span, modifiers=modifiers, targets=targets)
                  for (text, span) in split_report
               ]
-    print(markups); exit()
+    markups = [m for m in markups if len(m) != 0]
+    return markups
 # reports = list(df[df.train_val == 'train']['text'])
 # reports = [helpers.preprocess(report) for report in reports]
 # split_reports = [helpers.my_sentence_splitter(report) for report in reports]
@@ -41,7 +56,7 @@ def create_markup(s, modifiers=None, targets=None, span=None, prune_inactive=Tru
     markup = pyConText.ConTextMarkup()
     markup.setRawText(s)
     if not span: #Creates a default docSpan if you're just splitting a list
-        span = (0,len(s))
+        span = (0, len(s))
     markup.docSpan = span
     markup.cleanText()
     markup.markItems(modifiers, mode="modifier")
@@ -56,13 +71,42 @@ def create_markup(s, modifiers=None, targets=None, span=None, prune_inactive=Tru
     return markup
 
 
-def evaluate_report(df):
+def evaluate_report(markups, annotations):
     """
     Evaluates a report by matching pyConText's findings with annotated reference standard
+    `markups` is a list of pyConText markups
+    `annotations` is a dataframe where `File Name with extension` == the report name
     """
-    print(df.head())
-    print(df.tail())
+    for m in markups:
+        overlapping_annotations = find_overlapping_annotations(m, annotations)
+        print(overlapping_annotations)
+        exit()
     exit()
+    
+def find_overlapping_annotations(m, annotations):
+
+    def overlaps(m_span, a_span):
+        m_span = [int(n) for n in m_span]
+        a_span = [int(n) for n in a_span]
+        print(m_span, a_span)
+        overlap = ((a_span[0] <= m_span[0] <= a_span[1])
+                                |
+                  (a_span[0] <= m_span[1] <= a_span[1]))
+        print(overlap)
+        return overlap
+
+    overlapping_idx = []
+    for i, row in annotations.iterrows():
+        try:
+            if overlaps(m.docSpan, row.Span):
+                print("Match")
+                print(i)
+                overlapping_idx.append(i)
+        except:
+            continue
+    overlapping_annotations = annotations.iloc[overlapping_idx]
+    return overlapping_annotations
+   
     
 
 
@@ -71,8 +115,10 @@ def main():
     targets = targets = itemData.instantiateFromCSVtoitemData(TARGETS_FILE)
 
     df = pd.read_pickle(source_df)
+    df = df.iloc[:10]
     ref = pd.read_excel(REFERENCE_STANDARD)
-    #extract_markups_from_text(df.iloc[0].text, targets, modifiers)
+    ref = update_reference_df(ref)
+    extract_markups_from_text(df.iloc[0].text, targets, modifiers)
 
     df['markups'] = df.apply(lambda row: extract_markups_from_text(
                                                 row.text, targets, modifiers
@@ -80,6 +126,12 @@ def main():
                              axis=1
                              )
     print(df.head())
+    for idx, row in df.iterrows():
+        # Get all annotations from reference standard with this report name
+        annotations = ref[ref['File Name with extension'] == row.note_name]
+        evaluate_report(row.markups, annotations)
+
+    exit()
     reports = list(df[df.train_val == 'train']['text'])
     reports = [helpers.preprocess(report) for report in reports]
     split_reports = [helpers.my_sentence_splitter(report) for report in reports]
