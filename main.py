@@ -1,5 +1,6 @@
 import os, sys
 import re
+from multiprocessing import Pool
 import pandas as pd
 
 import pyConTextNLP.pyConTextGraph as pyConText
@@ -27,12 +28,14 @@ def update_reference_df(df):
     df['Span'] = spans
     return df
 
-def extract_markups_from_text(text, targets, modifiers):
+def extract_markups_from_text(report, targets, modifiers):
+    report_name, text = report
     split_report = helpers.my_sentence_splitter(text)
     markups = [create_markup(s=text, span=span, modifiers=modifiers, targets=targets)
                  for (text, span) in split_report
               ]
     markups = [m for m in markups if len(m) != 0]
+    markups = classify_markups(markups, report_name)
     return markups
 
 
@@ -215,9 +218,26 @@ def main():
     #df = df.iloc[:10]
     ref = pd.read_excel(REFERENCE_STANDARD)
     ref = update_reference_df(ref)
-    print(len(ref[ref.Class == 'Fluid collection-positive'])); 
-    print(set(ref.Class))
-    extract_markups_from_text(df.iloc[0].text, targets, modifiers)
+    reports = list(zip(df['note_name'], df['text']))
+    pool = Pool(processes=8)
+    list_of_classified_markups = [pool.apply(
+                             extract_markups_from_text, 
+                             args=(name_and_text, targets, modifiers)
+                         ) for name_and_text in reports]
+    pool.close()
+    pool.join()
+    classified_markups = pd.DataFrame(
+                             columns=['m', 'doc_span', 'markup_class', 'text']
+                         ).append(list_of_classified_markups)
+    print(classified_markups.head())
+    exit()
+    ##PICK up here
+
+
+
+
+    classified_markups = [{'m': m, 'doc_span': m.docSpan, 'markup_class': m.markup_class, 'text': m.text} for m in list_of_markups]
+    
 
     # TODO: Make this one long dataframe, like classified_markups
     df['markups'] = df.apply(lambda row: extract_markups_from_text(
@@ -235,8 +255,6 @@ def main():
         #if classified_markups
         classified_markups = classified_markups.append(row_markups, ignore_index=True)
     print(len(classified_markups))
-    classified_markups.to_excel(os.path.join(os.path.expanduser('~'), 'Desktop', 'markups.xlsx'))
-    print("Saved markups"); exit()
     print(classified_markups.head())
     evaluate_markups(ref, classified_markups)
 
